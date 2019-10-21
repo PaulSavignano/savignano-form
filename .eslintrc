@@ -1,0 +1,64 @@
+{
+  "env": {
+    "browser": true,
+    "node": true,
+    "jest": true
+  },
+  "extends": [
+    "airbnb",
+    "prettier"
+  ],
+  "parser": "babel-eslint",
+  "parserOptions": {
+    "allowImportExportEverywhere": true,
+    "sourceType": "module"
+  },
+  "plugins": [
+    "jest",
+    "react-hooks"
+  ],
+  "rules": {
+    "jest/lowercase-name": "off",
+    "jest/prefer-expect-assertions": "off",
+    "jest/prefer-inline-snapshots": "off",
+    "jest/prefer-strict-equal": "off",
+    "jsx-a11y/href-no-hash": 0,
+    "no-param-reassign": [
+      "error",
+      {
+        "ignorePropertyModificationsFor": [
+          "a"
+        ],
+        "props": true
+      }
+    ],
+    "no-underscore-dangle": [
+      "error",
+      {
+        "allow": [
+          "_id"
+        ]
+      }
+    ],
+    "object-curly-newline": [
+      "error",
+      {
+        "consistent": true
+      }
+    ],
+    "react-hooks/rules-of-hooks": "error",
+    "react/jsx-filename-extension": [
+      1,
+      {
+        "extensions": [
+          ".js",
+          ".jsx"
+        ]
+      }
+    ],
+    "semi": [
+      "error",
+      "never"
+    ]
+  }
+}
