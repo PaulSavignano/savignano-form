@@ -12,7 +12,18 @@ const testProps = {
   onRegisterField: jest.fn(),
   onUnregisterField: jest.fn(),
   onValidate: jest.fn(),
-  value: 'testing@test.com'
+  value: 'testing@test.com',
+  fieldRegisterProps: {
+    id: '1',
+    name: 'email',
+    onBlur: jest.fn(),
+    onChange: jest.fn(),
+    onFormat: jest.fn(),
+    onParse: jest.fn(),
+    onValidate: jest.fn(),
+    type: 'text',
+    value: undefined,
+  }
 }
 
 describe('FormFieldRoot', () => {

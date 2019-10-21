@@ -4,8 +4,10 @@ import { shallow } from 'enzyme'
 import FormFieldArrayRoot from './FormFieldArrayRoot'
 import setIn from './utils/setIn'
 
+const Component = props => <div {...props} />
+
 const testProps = {
-  component: jest.fn(componentProps => <div {...componentProps} />),
+  component: Component,
   name: 'emails',
   onState: jest.fn(),
   value: [{ email: 'testing1@test.com' }, { email: 'testing2@test.com' }],
@@ -45,7 +47,7 @@ describe('FormFieldArrayRoot', () => {
     const spy = jest.fn()
     const index = 0
     const values = setIn(testProps.values, testProps.name, undefined)
-    const wrapper = shallow(<FormFieldArrayRoot {...testProps} value={testProps.value[0]} onState={spy} />)
+    const wrapper = shallow(<FormFieldArrayRoot {...testProps} value={[testProps.value[0]]} onState={spy} />)
     wrapper.props().onDelete(index)
     expect(spy).toHaveBeenCalledWith({ values })
   })

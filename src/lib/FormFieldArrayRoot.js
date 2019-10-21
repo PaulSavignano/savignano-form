@@ -35,10 +35,10 @@ FormFieldArrayRoot.defaultProps = {
 }
 
 FormFieldArrayRoot.propTypes = {
-  component: PropTypes.node.isRequired,
+  component: PropTypes.elementType.isRequired,
   name: PropTypes.string.isRequired,
   onState: PropTypes.func.isRequired,
-  value: PropTypes.shape(Array),
+  value: PropTypes.instanceOf(Array),
   values: PropTypes.shape(Object).isRequired,
 }
 

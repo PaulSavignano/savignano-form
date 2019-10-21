@@ -8,13 +8,17 @@ const testCtx = {
   onBlur: jest.fn(),
   onChange: jest.fn(),
   onRegisterField: jest.fn(),
+  onState: jest.fn(),
   onUnregisterField: jest.fn(),
   touched: {},
   values: {}
 }
 
+const Component = props => <div {...props} />
+
 const testProps = {
   name: 'email',
+  component: Component,
 }
 
 describe('FormFieldArray', () => {

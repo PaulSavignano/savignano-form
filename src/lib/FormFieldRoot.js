@@ -4,8 +4,8 @@ import PropTypes from 'prop-types'
 export class FormFieldRootComponent extends PureComponent {
 
   componentDidMount() {
-    const { fieldProps, onRegisterField } = this.props
-    onRegisterField(fieldProps)
+    const { fieldRegisterProps, onRegisterField } = this.props
+    onRegisterField(fieldRegisterProps)
   }
 
   componentWillUnmount() {
@@ -18,7 +18,7 @@ export class FormFieldRootComponent extends PureComponent {
   render() {
     const {
       component: Comp,
-      fieldProps,
+      fieldRegisterProps,
       isPersistOnUnmount,
       onFormat,
       onParse,
@@ -47,9 +47,12 @@ FormFieldRootComponent.defaultProps = {
 }
 
 FormFieldRootComponent.propTypes = {
-  component: PropTypes.oneOfType([PropTypes.func, PropTypes.node, PropTypes.string])
-    .isRequired,
-  fieldProps: PropTypes.shape({
+  component: PropTypes.oneOfType([
+    PropTypes.func,
+    PropTypes.node,
+    PropTypes.string
+  ]).isRequired,
+  fieldRegisterProps: PropTypes.shape({
     id: PropTypes.string,
     name: PropTypes.string,
     onBlur: PropTypes.func,

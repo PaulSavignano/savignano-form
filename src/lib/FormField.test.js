@@ -15,10 +15,15 @@ const testCtx = {
 
 const testProps = {
   component: 'input',
+  id: '1',
   name: 'email',
+  onBlur: undefined,
+  onChange: undefined,
   onFormat: undefined,
+  onParse: undefined,
+  onValidate: undefined,
   type: 'text',
-  value: 'test@testing.com'
+  value: undefined
 }
 
 describe('FormField', () => {
@@ -32,7 +37,7 @@ describe('FormField', () => {
     const wrapper = shallow(<FormField {...testProps} value={undefined} />)
     const email = 'test2@testing.com'
     const contextWrapper = shallow(
-      wrapper.prop('children')({
+      wrapper.props().children({
         ...testCtx,
         values: {
           ...testCtx.values,
@@ -42,5 +47,4 @@ describe('FormField', () => {
     )
     expect(contextWrapper.prop('value')).toEqual(email)
   })
-
 })

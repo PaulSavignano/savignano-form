@@ -60,7 +60,7 @@ FormSubmit.propTypes = {
   children: PropTypes.oneOfType([PropTypes.node, PropTypes.string]).isRequired,
   component: PropTypes.func.isRequired,
   isDisabled: PropTypes.bool,
-  submitStateComponent: PropTypes.node,
+  submitStateComponent: PropTypes.elementType,
   type: PropTypes.string,
 }
 

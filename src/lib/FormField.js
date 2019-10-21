@@ -18,7 +18,7 @@ function FormField(props) {
     type,
     value,
   } = props
-  const fieldProps = {
+  const fieldRegisterProps = {
     id,
     name,
     onBlur,
@@ -38,7 +38,7 @@ function FormField(props) {
             {...props}
             {...getCheckedProps({ stateValue, type, value })}
             error={getIn(ctx.errors, name)}
-            fieldProps={fieldProps}
+            fieldRegisterProps={fieldRegisterProps}
             isTouched={Boolean(getIn(ctx.touched, name))}
             key={name}
             onBlur={ctx.onBlur}
@@ -66,8 +66,11 @@ FormField.defaultProps = {
 }
 
 FormField.propTypes = {
-  component: PropTypes.oneOfType([PropTypes.func, PropTypes.node, PropTypes.string])
-    .isRequired,
+  component: PropTypes.oneOfType([
+    PropTypes.func,
+    PropTypes.node,
+    PropTypes.string
+  ]).isRequired,
   id: PropTypes.string,
   name: PropTypes.string.isRequired,
   onBlur: PropTypes.func,

@@ -71,12 +71,12 @@ describe('FormSubmit', () => {
   })
 
   it('should render submitStateComponent if defined', () => {
-    const submitStateComponent = props => <div {...props} />
-    const wrapper = shallow(<FormSubmit {...testProps} submitStateComponent={submitStateComponent} />)
+    const SubmitStateComponent = props => <div {...props} />
+    const wrapper = shallow(<FormSubmit {...testProps} submitStateComponent={SubmitStateComponent} />)
     const contextWrapper = shallow(wrapper.prop('children')({ ...testCtx }))
     expect(contextWrapper.find('button').props().disabled).toEqual(false)
     expect(contextWrapper.find('button').props().type).toEqual('submit')
-    expect(contextWrapper.find('submitStateComponent').exists()).toBe(true)
+    expect(contextWrapper.find('SubmitStateComponent').exists()).toBe(true)
   })
 
 
