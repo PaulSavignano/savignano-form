@@ -41,14 +41,20 @@ import {
 function App() {
   return (
     <Form onSubmit={() => console.log('Submitted!')}>
-
+      <FormField component="input" label="Email" name="email" />
+      <FormSubmit component="button">
+        Submit
+      </FormSubmit>
+      <FormReset component="button">
+        Reset
+      </FormReset>
     </Form>
   );
 }
 ```
 
 ## Examples
-[Codesandbox](https://codesandbox.io/s/savignano-form?fontsize=14)
+[Codesandbox](https://codesandbox.io/s/savignano-form-qr5x1?fontsize=14)
 
 ## Contributing
 - see CONTRIBUTING.md
