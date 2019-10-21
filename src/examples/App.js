@@ -5,17 +5,19 @@ import Button from '@material-ui/core/Button'
 import Typography from '@material-ui/core/Typography'
 import Card from '@material-ui/core/Card'
 
-import Form from '../lib/Form'
-import FormField from '../lib/FormField'
+import {
+  Form,
+  FormField,
+  FormFieldArray,
+  FormSpy,
+  FormReset,
+  FormSubmit,
+} from '../lib'
 import FieldArray from './FieldArray'
-import FormFieldArray from '../lib/FormFieldArray'
-import FormSpy from '../lib/FormSpy'
 import FieldCheckbox from './FieldCheckbox'
 import FieldText from './FieldText'
 import FieldSwitch from './FieldSwitch'
 import FieldRadio from './FieldRadio'
-import FormReset from '../lib/FormReset'
-import FormSubmit from '../lib/FormSubmit'
 import { fetchApi } from './utils'
 import { validateEmail, validateRequired } from './validators'
 import { formatPhone, formatDollar } from './formatters'
