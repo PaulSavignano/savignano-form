@@ -10,9 +10,9 @@ function FormSubmitState(props) {
     case isSubmitting:
       return <CircularProgress size={24} style={{ color: 'inherit' }} />
     case isSubmitSuccess:
-      return children
+      return <CheckIcon />
     case isSubmitError:
-      return <span className="form-validate-icon normal vxdsicon vxdsicon-error" />
+      return <ErrorIcon />
     default:
       return children
   }
