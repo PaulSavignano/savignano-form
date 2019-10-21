@@ -52,4 +52,3 @@ function App() {
 
 ## Contributing
 - see CONTRIBUTING.md
-# savignano-form
