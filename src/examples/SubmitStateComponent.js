@@ -4,7 +4,7 @@ import CircularProgress from '@material-ui/core/CircularProgress'
 import CheckIcon from '@material-ui/icons/Check'
 import ErrorIcon from '@material-ui/icons/Error'
 
-function FormSubmitState(props) {
+function FormSubmitStateComponent(props) {
   const { children, isSubmitting, isSubmitSuccess, isSubmitError } = props
   switch (true) {
     case isSubmitting:
@@ -18,11 +18,11 @@ function FormSubmitState(props) {
   }
 }
 
-FormSubmitState.propTypes = {
+FormSubmitStateComponent.propTypes = {
   isSubmitting: PropTypes.bool.isRequired,
   isSubmitSuccess: PropTypes.bool.isRequired,
   isSubmitError: PropTypes.bool.isRequired,
   children: PropTypes.node.isRequired
 }
 
-export default FormSubmitState
+export default FormSubmitStateComponent

@@ -3,9 +3,11 @@ import { shallow } from 'enzyme'
 
 import FormReset from './FormReset'
 
+const Component = p => <button {...p} type="button" />
+
 const testProps = {
   children: jest.fn(),
-  component: p => <button {...p} type="button" />
+  component: Component
 }
 
 const testCtx = {

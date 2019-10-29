@@ -3,7 +3,7 @@ export const fetchApi = ({ res, err }) => {
     return setTimeout(() => {
       if (err) return reject(err)
       return resolve(res)
-    }, 1500)
+    }, 2500)
   })
 }
 

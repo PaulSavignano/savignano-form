@@ -1,6 +1,8 @@
 import React, { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 
+import getValue from './utils/getValue'
+
 export class FormFieldRootComponent extends PureComponent {
 
   componentDidMount() {
@@ -25,14 +27,17 @@ export class FormFieldRootComponent extends PureComponent {
       onRegisterField,
       onUnregisterField,
       onValidate,
+      type,
       value,
       ...rest
     } = this.props
-    const props = {
-      ...rest,
-      value: onFormat ? onFormat(value) : value
-    }
-    return <Comp {...props} />
+    return (
+      <Comp
+        {...rest}
+        value={getValue({ type, onFormat, value })}
+        type={type}
+      />
+    )
   }
 }
 

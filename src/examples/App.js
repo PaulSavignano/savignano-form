@@ -18,6 +18,7 @@ import FieldCheckbox from './FieldCheckbox'
 import FieldText from './FieldText'
 import FieldSwitch from './FieldSwitch'
 import FieldRadio from './FieldRadio'
+import SubmitStateComponent from './SubmitStateComponent'
 import { fetchApi } from './utils'
 import { validateEmail, validateRequired } from './validators'
 import { formatPhone, formatDollar } from './formatters'
@@ -68,18 +69,6 @@ const styles = theme => ({
 
 })
 
-export const defaultValues = {
-  role: 'mother',
-  lastName: ''
-}
-
-export const initialValues = {
-  firstName: 'Paul',
-  isPrice: true,
-  phone: '444',
-  price: 10,
-
-}
 
 class App extends Component {
   state = {
@@ -104,8 +93,19 @@ class App extends Component {
 
   render() {
     const { classes } = this.props
-    return (
+    const defaultValues = {
+      role: 'mother',
+      lastName: ''
+    }
 
+    const initialValues = {
+      firstName: 'Paul',
+      isPrice: true,
+      phone: '444',
+      price: 10,
+      email: 'paul@gmail.com'
+    }
+    return (
       <Form
         onSubmit={this.handleSubmit}
         defaultValues={defaultValues}
@@ -243,7 +243,7 @@ class App extends Component {
               variant="contained"
               color="primary"
               component={Button}
-              isDisplayState
+              submitStateComponent={SubmitStateComponent}
               className={classes.button}
             >
               Submit

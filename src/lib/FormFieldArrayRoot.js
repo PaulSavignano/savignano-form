@@ -3,6 +3,13 @@ import PropTypes from 'prop-types'
 
 import setIn from './utils/setIn'
 
+export function getFiltered({ index, value }) {
+  if (value && value.length) {
+    return value.filter((v, i) => i !== index)
+  }
+  return []
+}
+
 function FormFieldArrayRoot({
   component: Component,
   name,
@@ -16,7 +23,7 @@ function FormFieldArrayRoot({
       name={name}
       onAdd={() => setValueArray([...valueArray, valueArray.length])}
       onDelete={(index) => {
-        const filtered = value && value.length ? value.filter((v, i) => i !== index) : []
+        const filtered = getFiltered({ index, value })
         const nextValue = filtered.length ? filtered : undefined
         onState({ values: setIn(values, name, nextValue) })
         return setValueArray(valueArray.filter((v, i) => i !== index))

@@ -6,6 +6,7 @@ import classNames from './utils/classNames'
 import setIn from './utils/setIn'
 import getIn from './utils/getIn'
 import isValue from './utils/isValue'
+import handleEvent from './utils/handleEvent'
 
 class Form extends PureComponent {
   constructor(props) {
@@ -219,7 +220,7 @@ class Form extends PureComponent {
   }
 
   handleSubmit = (e) => {
-    e.preventDefault()
+    handleEvent(e)
     this.setState({ isSubmitting: true })
     const validationState = this.handleSubmitValidations()
     if (validationState.errors && Object.keys(validationState.errors).length) {
@@ -239,6 +240,7 @@ class Form extends PureComponent {
   render() {
     const {
       children,
+      component: Comp,
       className,
       style
     } = this.props
@@ -255,13 +257,13 @@ class Form extends PureComponent {
     }
     return (
       <Context.Provider value={ctx}>
-        <form
+        <Comp
           className={classNames('Form', className)}
           onSubmit={this.handleSubmit}
           style={style}
         >
           {children}
-        </form>
+        </Comp>
       </Context.Provider>
     )
   }
@@ -269,6 +271,7 @@ class Form extends PureComponent {
 
 Form.defaultProps = {
   className: undefined,
+  component: 'form',
   defaultValues: {},
   initialValues: {},
   onValidate: undefined,
@@ -278,6 +281,7 @@ Form.defaultProps = {
 Form.propTypes = {
   children: PropTypes.oneOfType([PropTypes.func, PropTypes.node]).isRequired,
   className: PropTypes.string,
+  component: PropTypes.oneOfType([PropTypes.func, PropTypes.node, PropTypes.string]),
   defaultValues: PropTypes.shape(Object),
   initialValues: PropTypes.shape(Object),
   onSubmit: PropTypes.func.isRequired,

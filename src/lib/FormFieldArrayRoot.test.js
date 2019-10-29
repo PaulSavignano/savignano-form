@@ -1,7 +1,7 @@
 import React from 'react'
 import { shallow } from 'enzyme'
 
-import FormFieldArrayRoot from './FormFieldArrayRoot'
+import FormFieldArrayRoot, { getFiltered } from './FormFieldArrayRoot'
 import setIn from './utils/setIn'
 
 const Component = props => <div {...props} />
@@ -13,6 +13,17 @@ const testProps = {
   value: [{ email: 'testing1@test.com' }, { email: 'testing2@test.com' }],
   values: {},
 }
+
+describe('getFiltered', () => {
+  it('should filter value by index', () => {
+    const filtered = getFiltered({ index: 1, value: [...testProps.value] })
+    expect(filtered).toEqual([testProps.value[0]])
+  })
+  it('should return empty array if no value', () => {
+    const filtered = getFiltered({ index: 1, value: undefined })
+    expect(filtered).toEqual([])
+  })
+})
 
 describe('FormFieldArrayRoot', () => {
 

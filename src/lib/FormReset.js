@@ -19,11 +19,12 @@ function FormReset(props) {
 }
 
 FormReset.defaultProps = {
-  names: []
+  names: [],
+  component: 'button',
 }
 
 FormReset.propTypes = {
-  component: PropTypes.func.isRequired,
+  component: PropTypes.oneOfType([PropTypes.node, PropTypes.string, PropTypes.object]),
   names: PropTypes.arrayOf(PropTypes.string)
 }
 

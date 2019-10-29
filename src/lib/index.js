@@ -4,6 +4,8 @@ import FormFieldArray from './FormFieldArray'
 import FormReset from './FormReset'
 import FormSpy from './FormSpy'
 import FormSubmit from './FormSubmit'
+import useFormSubmit from './useFormSubmit'
+import useFormField from './useFormField'
 
 export {
   Form,
@@ -12,4 +14,6 @@ export {
   FormReset,
   FormSpy,
   FormSubmit,
+  useFormSubmit,
+  useFormField,
 }

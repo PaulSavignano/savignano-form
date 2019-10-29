@@ -54,11 +54,12 @@ FormSubmit.defaultProps = {
   isDisabled: false,
   submitStateComponent: undefined,
   type: 'submit',
+  component: 'button',
 }
 
 FormSubmit.propTypes = {
   children: PropTypes.oneOfType([PropTypes.node, PropTypes.string]).isRequired,
-  component: PropTypes.func.isRequired,
+  component: PropTypes.oneOfType([PropTypes.node, PropTypes.string, PropTypes.object]),
   isDisabled: PropTypes.bool,
   submitStateComponent: PropTypes.elementType,
   type: PropTypes.string,
