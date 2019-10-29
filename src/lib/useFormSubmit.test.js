@@ -12,13 +12,6 @@ const testCtx = {
   submitError: undefined,
 }
 
-const HookWrapper = ({ hook }) => <div hook={hook ? hook() : undefined} />
-const HookProvider = ({ hook }) => (
-  <Context.Provider value={testCtx}>
-    <HookWrapper hook={() => hook()} />
-  </Context.Provider>
-)
-
 describe('useFormSubmit', () => {
   it('should return context', () => {
     const expected = {

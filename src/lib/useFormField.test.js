@@ -3,7 +3,16 @@ import { mount } from 'enzyme'
 
 import Context from './Context'
 import useFormField from './useFormField'
-import { ErrorBoundary, HookWrapper } from '../setUpTests'
+
+class ErrorBoundary extends React.Component {
+  componentDidCatch(error) {
+    this.props.spy(error)
+  }
+
+  render() {
+    return this.props.children
+  }
+}
 
 const testProps = {
   id: '123456',
