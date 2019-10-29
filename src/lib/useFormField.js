@@ -17,7 +17,6 @@ function useFormField({
   value,
 }) {
   const ctx = useContext(Context)
-  console.log('useFormField name ', name)
   if (!name) throw Error('useFormField requires a name')
   const fieldRegisterProps = {
     id,

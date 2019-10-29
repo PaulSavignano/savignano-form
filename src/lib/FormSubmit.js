@@ -59,7 +59,7 @@ FormSubmit.defaultProps = {
 
 FormSubmit.propTypes = {
   children: PropTypes.oneOfType([PropTypes.node, PropTypes.string]).isRequired,
-  component: PropTypes.oneOfType([PropTypes.node, PropTypes.string, PropTypes.object]),
+  component: PropTypes.oneOfType([PropTypes.node, PropTypes.string, PropTypes.object, PropTypes.func]),
   isDisabled: PropTypes.bool,
   submitStateComponent: PropTypes.elementType,
   type: PropTypes.string,

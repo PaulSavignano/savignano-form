@@ -24,7 +24,7 @@ FormReset.defaultProps = {
 }
 
 FormReset.propTypes = {
-  component: PropTypes.oneOfType([PropTypes.node, PropTypes.string, PropTypes.object]),
+  component: PropTypes.oneOfType([PropTypes.node, PropTypes.string, PropTypes.object, PropTypes.func]),
   names: PropTypes.arrayOf(PropTypes.string)
 }
 

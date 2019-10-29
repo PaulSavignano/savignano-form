@@ -11,9 +11,11 @@ const testCtx = {
   submitError: '',
 }
 
+const MyComponent = props => <button type="button" {...props} />
+
 const testProps = {
   children: 'Save',
-  component: p => <button type="button" {...p} />,
+  component: MyComponent,
   submitStateComponent: undefined,
 }
 
