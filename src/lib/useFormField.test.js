@@ -1,7 +1,7 @@
 import React from 'react'
 import { mount } from 'enzyme'
 
-import Context from './Context'
+import FormContext from './FormContext'
 import useFormField from './useFormField'
 
 class ErrorBoundary extends React.Component {
@@ -42,9 +42,11 @@ describe('useFormField', () => {
     const expected = {
       error: testCtx.error,
       isTouched: testCtx.isTouched,
+      name: testProps.name,
       onBlur: testCtx.onBlur,
       onChange: testCtx.onChange,
-      value: 'test1@testing.com'
+      type: testProps.type,
+      value: 'test1@testing.com',
     }
     const MyFormField = (props) => {
       const fieldProps = useFormField(props)
@@ -52,9 +54,9 @@ describe('useFormField', () => {
       return <div />
     }
     mount(
-      <Context.Provider value={testCtx}>
+      <FormContext.Provider value={testCtx}>
         <MyFormField {...testProps} />
-      </Context.Provider>
+      </FormContext.Provider>
     )
   })
 
@@ -79,9 +81,9 @@ describe('useFormField', () => {
       return <div />
     }
     const wrapper = mount(
-      <Context.Provider value={{ ...testCtx, onUnregisterField: spy }}>
+      <FormContext.Provider value={{ ...testCtx, onUnregisterField: spy }}>
         <MyFormField {...testProps} />
-      </Context.Provider>
+      </FormContext.Provider>
     )
     wrapper.unmount()
     expect(spy).toHaveBeenCalled()

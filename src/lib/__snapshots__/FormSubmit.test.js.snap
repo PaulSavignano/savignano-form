@@ -1,3 +1,3 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`FormSubmit should match snapshot 1`] = `ShallowWrapper {}`;
+exports[`FormSubmit should match snapshot 1`] = `ReactWrapper {}`;

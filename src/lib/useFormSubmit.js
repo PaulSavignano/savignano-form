@@ -1,22 +1,30 @@
-import { useContext } from 'react'
+import { useContext, useMemo } from 'react'
 
-import Context from './Context'
+import FormContext from './FormContext'
 
-function useFormSubmit() {
+const useFormSubmit = () => {
   const {
     isErrors,
     isSubmitSuccess,
     isSubmitting,
     onSubmit,
     submitError
-  } = useContext(Context)
-  return {
-    isSubmitting,
+  } = useContext(FormContext)
+  return useMemo(() => {
+    return {
+      isSubmitting,
+      isSubmitSuccess,
+      isSubmitError: Boolean(submitError),
+      isDisabled: isSubmitting || isErrors,
+      onSubmit
+    }
+  }, [
+    isErrors,
     isSubmitSuccess,
-    isSubmitError: Boolean(submitError),
-    isDisabled: isSubmitting || isErrors,
-    onSubmit
-  }
+    isSubmitting,
+    onSubmit,
+    submitError
+  ])
 }
 
 export default useFormSubmit

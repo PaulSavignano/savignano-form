@@ -1,57 +1,47 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import PropTypes from 'prop-types'
 
-import Context from './Context'
-import FormFieldRoot from './FormFieldRoot'
-import getIn from './utils/getIn'
-import getCheckedProps from './utils/getCheckedProps'
+import useFormField from './useFormField'
 
-function FormField(props) {
-  const {
-    id,
+function FormField({
+  name,
+  id,
+  onBlur,
+  onChange,
+  onFormat,
+  onParse,
+  onValidate,
+  type,
+  value,
+  isPersistOnUnmount,
+  component: Component,
+  ...rest
+}) {
+  const fieldProps = useFormField({
     name,
+    id,
     onBlur,
     onChange,
     onFormat,
     onParse,
     onValidate,
+    isPersistOnUnmount,
     type,
     value,
-  } = props
-  const fieldRegisterProps = {
-    id,
-    name,
-    onBlur,
-    onChange,
-    onFormat,
-    onParse,
-    onValidate,
-    type,
+  })
+  return useMemo(() => {
+    const { isTouched, ...restFieldProps } = fieldProps
+    const isTouchedProp = typeof Component === 'string' ? {} : { isTouched }
+    return (
+      <Component {...rest} {...restFieldProps} {...isTouchedProp} />
+    )
+  }, [
     value,
-  }
-  return (
-    <Context.Consumer>
-      {ctx => {
-        const stateValue = getIn(ctx.values, name)
-        return (
-          <FormFieldRoot
-            {...props}
-            {...getCheckedProps({ stateValue, type, value })}
-            error={getIn(ctx.errors, name)}
-            fieldRegisterProps={fieldRegisterProps}
-            isTouched={Boolean(getIn(ctx.touched, name))}
-            key={name}
-            onBlur={ctx.onBlur}
-            onChange={ctx.onChange}
-            onRegisterField={ctx.onRegisterField}
-            onUnregisterField={ctx.onUnregisterField}
-            type={type}
-            value={value || stateValue}
-          />
-        )
-      }}
-    </Context.Consumer>
-  )
+    fieldProps.value,
+    fieldProps.checked,
+    fieldProps.error,
+    fieldProps.isTouched,
+  ])
 }
 
 FormField.defaultProps = {
@@ -62,7 +52,8 @@ FormField.defaultProps = {
   onParse: undefined,
   onValidate: undefined,
   type: undefined,
-  value: undefined
+  value: undefined,
+  isPersistOnUnmount: false
 }
 
 FormField.propTypes = {

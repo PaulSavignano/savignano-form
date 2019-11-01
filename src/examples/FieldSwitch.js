@@ -3,7 +3,7 @@ import FormControlLabel from '@material-ui/core/FormControlLabel'
 import Switch from '@material-ui/core/Switch'
 
 function FieldSwitch(props) {
-  const { className, label, name, onChange, value, ...rest } = props
+  const { className, label, name, onChange, value } = props
   return (
     <FormControlLabel
       className={className}

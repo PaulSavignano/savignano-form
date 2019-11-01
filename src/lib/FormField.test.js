@@ -1,7 +1,8 @@
 import React from 'react'
-import { shallow } from 'enzyme'
+import { mount, shallow } from 'enzyme'
 
 import FormField from './FormField'
+import FormContext from './FormContext'
 
 const testCtx = {
   errors: {},
@@ -27,24 +28,12 @@ const testProps = {
 }
 
 describe('FormField', () => {
-
   it('should match snapshot', () => {
-    const wrapper = shallow(<FormField {...testProps} />)
-    expect(wrapper).toMatchSnapshot()
-  })
-
-  it('should pass context value to FormFieldRoot when no value prop exists', () => {
-    const wrapper = shallow(<FormField {...testProps} value={undefined} />)
-    const email = 'test2@testing.com'
-    const contextWrapper = shallow(
-      wrapper.props().children({
-        ...testCtx,
-        values: {
-          ...testCtx.values,
-          email
-        }
-      })
+    const wrapper = mount(
+      <FormContext.Provider value={testCtx}>
+        <FormField {...testProps} />
+      </FormContext.Provider>
     )
-    expect(contextWrapper.prop('value')).toEqual(email)
+    expect(wrapper).toMatchSnapshot()
   })
 })

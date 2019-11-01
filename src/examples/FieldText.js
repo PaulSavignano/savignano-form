@@ -4,6 +4,7 @@ import TextField from '@material-ui/core/TextField'
 
 function FieldText(props) {
   const { error, isTouched, ...rest } = props
+
   const errorProps = isTouched ?
     error && {
       error: Boolean(error),

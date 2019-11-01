@@ -1,9 +1,9 @@
 import { useContext } from 'react'
 
-import Context from './Context'
+import FormContext from './FormContext'
 
 function useForm() {
-  const ctx = useContext(Context)
+  const ctx = useContext(FormContext)
   return ctx
 }
 

@@ -1,26 +1,58 @@
-import React from 'react'
+import React, { useContext, useEffect, useMemo, useState, useRef } from 'react'
 import PropTypes from 'prop-types'
 
-import Context from './Context'
+import FormContext from './FormContext'
 import getIn from './utils/getIn'
-import FormFieldArrayRoot from './FormFieldArrayRoot'
+import setIn from './utils/setIn'
 
-function FormFieldArray({ name, ...rest }) {
+export function getValueArray(value) {
+  if (value) {
+    return value.map((v, i) => i)
+  }
+  return []
+}
+
+export function getInitialValueArray({ name, values, initialValues, defaultValues }) {
+  const value = getIn(values, name)
+  if (value) return getValueArray(value)
+  const initialValue = getIn(initialValues, name)
+  if (initialValue) return getValueArray(initialValue)
+  const defaultValue = getIn(defaultValues, name)
+  if (defaultValue) return getValueArray(defaultValue)
+  return []
+}
+
+export function getFiltered({ index, value }) {
+  if (value && value.length) {
+    return value.filter((v, i) => i !== index)
+  }
+  return undefined
+}
+
+function FormFieldArray({ name, component: Component, ...rest }) {
+  const { onState, values, formProps } = useContext(FormContext)
+  const value = getIn(values, name) || []
+  const [valueArray, setValueArray] = useState(getInitialValueArray({ name, values, initialValues: formProps.initialValues, defaultValues: formProps.defaultValues }))
   return (
-    <Context.Consumer>
-      {({ onState, values }) => {
-        const value = getIn(values, name)
-        return (
-          <FormFieldArrayRoot
-            {...rest}
-            name={name}
-            onState={onState}
-            values={values}
-            value={value}
-          />
-        )
+    <Component
+      {...rest}
+      name={name}
+      onAdd={() => {
+        return setValueArray([...valueArray, valueArray.length])
       }}
-    </Context.Consumer>
+      onDelete={(index) => {
+        const filtered = getFiltered({ index, value })
+        onState({ values: setIn(values, name, filtered) })
+        return setValueArray(valueArray.filter((v, i) => i !== index))
+      }}
+      onChange={(changedValue) => {
+        const nextValues = setIn(values, name, changedValue)
+        const nextValueArray = getValueArray(changedValue)
+        onState({ values: nextValues })
+        return setValueArray(nextValueArray)
+      }}
+      value={valueArray}
+    />
   )
 }
 

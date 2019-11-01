@@ -187,6 +187,19 @@ describe('Form', () => {
       expect(spy).toHaveBeenCalledWith(e)
     })
 
+    it('should call handleChange if native', () => {
+      const wrapper = shallow(<Form {...testProps} />)
+      wrapper.instance().handleRegisterField(testFields.email)
+      const spy = jest.spyOn(wrapper.instance(), 'handleChange')
+      const e = {
+        name: 'email',
+        value: 'test@test.com',
+      }
+      wrapper.instance().forceUpdate()
+      wrapper.props().value.onChange(e)
+      expect(spy).toHaveBeenCalledWith(e)
+    })
+
     it('should handle checkbox field by setting value to target.checked', () => {
       const name = 'isEmail'
       const wrapper = shallow(<Form {...testProps} />)

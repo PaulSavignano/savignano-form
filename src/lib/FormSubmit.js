@@ -1,66 +1,56 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import PropTypes from 'prop-types'
 
-import Context from './Context'
-
-export function getSubmitState(props) {
-  const { children, isSubmitting, isSubmitSuccess, isSubmitError } = props
-  switch (true) {
-    case isSubmitting:
-      return '...submitting'
-    case isSubmitSuccess:
-      return children
-    case isSubmitError:
-      return 'Error'
-    default:
-      return children
-  }
-}
+import useFormSubmit from './useFormSubmit'
 
 function FormSubmit(props) {
+  const { isErrors, isSubmitSuccess, isSubmitting, onSubmit, submitError } = useFormSubmit()
   const {
     children,
     component: Comp,
-    isDisabled,
+    disabled,
     submitStateComponent: SubmitStateComponent,
-    type,
+    onClick,
+    onPress,
     ...rest
   } = props
-  return (
-    <Context.Consumer>
-      {({ isErrors, isSubmitSuccess, isSubmitting, onSubmit, submitError }) => (
-        <Comp {...rest} {...type !== 'submit' && { onClick: onSubmit }} disabled={isDisabled || isSubmitting || isErrors} type={type}>
-          {SubmitStateComponent ? (
-            <SubmitStateComponent
-              isSubmitError={Boolean(submitError)}
-              isSubmitSuccess={isSubmitSuccess}
-              isSubmitting={isSubmitting}
-            >
-              {children}
-            </SubmitStateComponent>
-          ) : getSubmitState({
-            children,
-            isSubmitError: Boolean(submitError),
-            isSubmitSuccess,
-            isSubmitting,
-          })}
-        </Comp>
-      )}
-    </Context.Consumer>
-  )
+  return useMemo(() => {
+    return (
+      <Comp
+        {...rest}
+        {...onClick && { onClick: onSubmit }}
+        {...onPress && { onPress: onSubmit }}
+        disabled={disabled || isSubmitting || isErrors}
+      >
+        {SubmitStateComponent ? (
+          <SubmitStateComponent
+            isSubmitError={Boolean(submitError)}
+            isSubmitSuccess={isSubmitSuccess}
+            isSubmitting={isSubmitting}
+          >
+            {children}
+          </SubmitStateComponent>
+        ) : children}
+      </Comp>
+    )
+  }, [isErrors, isSubmitSuccess, isSubmitting, onSubmit, submitError, disabled])
 }
 
 FormSubmit.defaultProps = {
-  isDisabled: false,
+  component: 'button',
+  disabled: false,
+  onClick: undefined,
+  onPress: undefined,
   submitStateComponent: undefined,
   type: 'submit',
-  component: 'button',
 }
 
 FormSubmit.propTypes = {
   children: PropTypes.oneOfType([PropTypes.node, PropTypes.string]).isRequired,
   component: PropTypes.oneOfType([PropTypes.node, PropTypes.string, PropTypes.object, PropTypes.func]),
-  isDisabled: PropTypes.bool,
+  disabled: PropTypes.bool,
+  onClick: PropTypes.func,
+  onPress: PropTypes.func,
   submitStateComponent: PropTypes.elementType,
   type: PropTypes.string,
 }

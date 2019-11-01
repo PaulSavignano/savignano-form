@@ -1,35 +1,13 @@
-import React from 'react'
+import { useContext, useMemo } from 'react'
 import PropTypes from 'prop-types'
 
-import Context from './Context'
-import getIn from './utils/getIn'
+import FormContext from './FormContext'
+import getSpiedValues from './utils/getSpiedValues'
 
-export const getSpied = ({ names, values }) => {
-  const spied = names.reduce((a, v) => {
-    a[v] = getIn(values, v)
-    return a
-  }, {})
-  return spied
-}
-
-export const FormSpyRoot = React.memo(({ children, ...rest }) => children(rest))
-
-FormSpyRoot.defaultProps = {
-  names: []
-}
-
-FormSpyRoot.propTypes = {
-  children: PropTypes.func.isRequired,
-  names: PropTypes.arrayOf(PropTypes.string)
-}
-
-function FormSpy(props) {
-  const { names, ...rest } = props
-  return (
-    <Context.Consumer>
-      {({ values }) => <FormSpyRoot {...rest} {...getSpied({ names, values })} />}
-    </Context.Consumer>
-  )
+function FormSpy({ children, names }) {
+  const { values } = useContext(FormContext)
+  const spiedValues = getSpiedValues({ names, values })
+  return useMemo(() => children({ ...spiedValues }), [spiedValues, names])
 }
 
 FormSpy.defaultProps = {

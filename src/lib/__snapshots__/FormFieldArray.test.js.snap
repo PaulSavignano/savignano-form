@@ -1,3 +1,36 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`FormFieldArray should match snapshot 1`] = `ShallowWrapper {}`;
+exports[`FormFieldArray should match snapshot 1`] = `
+<DocumentFragment>
+  <form>
+    <div>
+      <button
+        type="button"
+      >
+        Add
+      </button>
+      <button
+        type="button"
+      >
+        Change
+      </button>
+      <ul>
+        <li>
+          <input
+            label="emails 0"
+            name="emails.0.email"
+            type="text"
+            value="test1@test.com"
+          />
+          <button
+            data-testid="delete-0"
+            type="button"
+          >
+            Delete
+          </button>
+        </li>
+      </ul>
+    </div>
+  </form>
+</DocumentFragment>
+`;

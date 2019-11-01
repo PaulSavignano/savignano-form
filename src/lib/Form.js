@@ -1,12 +1,12 @@
 import React, { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 
-import Context from './Context'
-import classNames from './utils/classNames'
+import FormContext from './FormContext'
 import setIn from './utils/setIn'
 import getIn from './utils/getIn'
 import isValue from './utils/isValue'
 import handleEvent from './utils/handleEvent'
+
 
 class Form extends PureComponent {
   constructor(props) {
@@ -76,11 +76,15 @@ class Form extends PureComponent {
   }
 
   handleChangeEvent = (e) => {
-    const { target } = e
-    const { type } = this.fields[target.name]
-    const isCheckbox = /checkbox/.test(type)
-    const value = isCheckbox ? target.checked : target.value
-    return this.handleChange({ name: target.name, value })
+    if (e && e.target && e.target.name) {
+      const { target } = e
+      const { type } = this.fields[target.name]
+      const isCheckbox = /checkbox/.test(type)
+      const value = isCheckbox ? target.checked : target.value
+      return this.handleChange({ name: target.name, value })
+    }
+    const { name, value } = e
+    return this.handleChange({ name, value })
   }
 
   handleOnBlur = ({ name }) => this.setState(state => ({
@@ -199,7 +203,10 @@ class Form extends PureComponent {
     return undefined
   }
 
-  handleState = state => this.setState(state)
+  handleState = state => {
+    console.log('onState ', state)
+    return this.setState(state)
+  }
 
   handleSubmitValidations = () => {
     const validationState = Object.keys(this.fields).reduce((a, name) => {
@@ -229,7 +236,10 @@ class Form extends PureComponent {
     return this.props
       .onSubmit(this.state.values)
       .then((res) => {
-        if (this.mounted) this.handleReset()
+        if (this.mounted) {
+          this.setState({ isSubmitSuccess: true })
+          this.handleReset()
+        }
         return Promise.resolve(res)
       })
       .catch((error) => {
@@ -241,8 +251,11 @@ class Form extends PureComponent {
     const {
       children,
       component: Comp,
-      className,
-      style
+      onSubmit,
+      initialValues,
+      defaultValues,
+      onValidate,
+      ...rest
     } = this.props
     const ctx = {
       ...this.state,
@@ -254,17 +267,17 @@ class Form extends PureComponent {
       onState: this.handleState,
       onSubmit: this.handleSubmit,
       onUnregisterField: this.handleUnregisterField,
+      formProps: this.props,
     }
     return (
-      <Context.Provider value={ctx}>
+      <FormContext.Provider value={ctx}>
         <Comp
-          className={classNames('Form', className)}
-          onSubmit={this.handleSubmit}
-          style={style}
+          {...rest}
+          {...onSubmit && { onSubmit: this.handleSubmit }}
         >
           {children}
         </Comp>
-      </Context.Provider>
+      </FormContext.Provider>
     )
   }
 }
@@ -274,6 +287,7 @@ Form.defaultProps = {
   component: 'form',
   defaultValues: {},
   initialValues: {},
+  onSubmit: undefined,
   onValidate: undefined,
   style: undefined,
 }
@@ -284,7 +298,7 @@ Form.propTypes = {
   component: PropTypes.oneOfType([PropTypes.func, PropTypes.node, PropTypes.string]),
   defaultValues: PropTypes.shape(Object),
   initialValues: PropTypes.shape(Object),
-  onSubmit: PropTypes.func.isRequired,
+  onSubmit: PropTypes.func,
   onValidate: PropTypes.func,
   style: PropTypes.objectOf(PropTypes.object),
 }

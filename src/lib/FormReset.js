@@ -1,21 +1,18 @@
-import React from 'react'
+import React, { useContext, useMemo } from 'react'
 import PropTypes from 'prop-types'
 
-import Context from './Context'
+import FormContext from './FormContext'
 
 function FormReset(props) {
+  const { onReset } = useContext(FormContext)
   const { component: Comp, names, ...rest } = props
-  return (
-    <Context.Consumer>
-      {({ onReset }) => (
-        <Comp
-          {...rest}
-          onClick={() => onReset(names)}
-          type="button"
-        />
-      )}
-    </Context.Consumer>
-  )
+  return useMemo(() => (
+    <Comp
+      {...rest}
+      onClick={() => onReset(names)}
+      type="button"
+    />
+  ), [names])
 }
 
 FormReset.defaultProps = {

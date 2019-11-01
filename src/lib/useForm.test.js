@@ -1,7 +1,7 @@
 import React from 'react'
 import { mount } from 'enzyme'
 
-import Context from './Context'
+import FormContext from './FormContext'
 import useForm from './useForm'
 
 const testCtx = {
@@ -23,9 +23,9 @@ describe('useForm', () => {
       return <div />
     }
     mount(
-      <Context.Provider value={testCtx}>
+      <FormContext.Provider value={testCtx}>
         <MyForm />
-      </Context.Provider>
+      </FormContext.Provider>
     )
   })
 })

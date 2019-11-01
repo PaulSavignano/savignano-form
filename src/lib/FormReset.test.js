@@ -1,13 +1,12 @@
 import React from 'react'
-import { shallow } from 'enzyme'
+import { mount, shallow } from 'enzyme'
 
+import FormContext from './FormContext'
 import FormReset from './FormReset'
 
-const Component = p => <button {...p} type="button" />
-
 const testProps = {
-  children: jest.fn(),
-  component: Component
+  children: 'Reset',
+  component: 'button'
 }
 
 const testCtx = {
@@ -16,19 +15,24 @@ const testCtx = {
 
 describe('FormReset', () => {
   it('should match snapshot', () => {
-    const wrapper = shallow(<FormReset {...testProps} />)
+    const wrapper = shallow(
+      <FormContext.Provider value={testCtx}>
+        <FormReset {...testProps} />
+      </FormContext.Provider>
+    )
     expect(wrapper).toMatchSnapshot()
   })
-  it('should render child component', () => {
-    const wrapper = shallow(<FormReset {...testProps} />)
-    const contextWrapper = shallow(wrapper.prop('children')({ ...testCtx }))
-    expect(contextWrapper.find('button').exists()).toEqual(true)
-  })
   it('should call onReset when clicked', () => {
-    const wrapper = shallow(<FormReset {...testProps} />)
     const spy = jest.fn()
-    const contextWrapper = shallow(wrapper.prop('children')({ onReset: spy }))
-    const button = contextWrapper.find('button')
+    const ctx = {
+      onReset: spy
+    }
+    const wrapper = mount(
+      <FormContext.Provider value={ctx}>
+        <FormReset {...testProps} />
+      </FormContext.Provider>
+    )
+    const button = wrapper.find('button')
     button.props().onClick({ preventDefault: jest.fn() })
     expect(spy).toHaveBeenCalled()
   })
