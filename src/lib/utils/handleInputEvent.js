@@ -1,5 +1,4 @@
 function handleInputEvent(e) {
-  console.error('handleInputEvent ', e)
   if (e && e.target && e.target.name) {
     return { name: e.target.name, value: e.target.value, checked: e.target.checked }
   }
