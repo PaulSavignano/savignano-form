@@ -95,7 +95,7 @@ function App({ classes }) {
   }
   return (
     <Form
-      onSubmit={handleSubmit}
+
       defaultValues={defaultValues}
       initialValues={initialValues}
     >
@@ -229,8 +229,10 @@ function App({ classes }) {
             variant="contained"
             color="primary"
             component={Button}
+            onClick={handleSubmit}
             submitStateComponent={SubmitStateComponent}
             className={classes.button}
+            type="button"
           >
             Submit
           </FormSubmit>

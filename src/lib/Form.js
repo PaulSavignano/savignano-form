@@ -224,14 +224,15 @@ class Form extends PureComponent {
   }
 
   handleSubmit = (e) => {
+    const { onSubmit: onSubmitProp } = this.props
+    const fn = onSubmitProp || e
     handleSubmitEvent(e)
     this.setState({ isSubmitting: true })
     const validationState = this.handleSubmitValidations()
     if (validationState.errors && Object.keys(validationState.errors).length) {
       return this.setState({ ...validationState, isSubmitting: false })
     }
-    return this.props
-      .onSubmit(this.state.values)
+    return fn(this.state.values)
       .then((res) => {
         if (this.mounted) {
           this.setState({ isSubmitSuccess: true })

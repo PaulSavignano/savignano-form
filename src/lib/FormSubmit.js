@@ -18,8 +18,8 @@ function FormSubmit(props) {
     return (
       <Comp
         {...rest}
-        {...onClick && { onClick: onSubmit }}
-        {...onPress && { onPress: onSubmit }}
+        {...onClick && { onClick: () => onSubmit(onClick) }}
+        {...onPress && { onPress: () => onSubmit(onPress) }}
         disabled={disabled || isSubmitting || isErrors}
       >
         {SubmitStateComponent ? (

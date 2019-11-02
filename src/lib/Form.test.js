@@ -569,6 +569,15 @@ describe('Form', () => {
       expect(spy).toHaveBeenCalledWith(e)
     })
 
+    it('should call when field prop is called and onSubmit props is NOT provided', () => {
+      const wrapper = shallow(<Form {...testProps} onSubmit={undefined} />)
+      const e = jest.fn(() => Promise.resolve({}))
+      const spy = jest.spyOn(wrapper.instance(), 'handleSubmit')
+      wrapper.instance().forceUpdate()
+      wrapper.props().value.onSubmit(e)
+      expect(spy).toHaveBeenCalledWith(e)
+    })
+
     it('should not call onSubmit prop and set error in state if validation error', () => {
       const wrapper = shallow(<Form {...testProps} />)
       const validationErrors = {
