@@ -79,7 +79,6 @@ class Form extends PureComponent {
   }
 
   handleChangeEvent = (e) => {
-    console.error('handleChangeEvent ', e, this.fields)
     const { name, value, checked } = handleInputEvent(e)
     const { type } = this.fields[name]
     const isCheckbox = /checkbox/.test(type)
@@ -119,7 +118,6 @@ class Form extends PureComponent {
   }
 
   handleRegisterField = ({ name, ...rest }) => {
-    console.log('handleRegisterField ', name)
     if (this.fields[name]) return undefined
     this.fields[name] = rest
     const initialValue = getIn(this.props.initialValues, name) || getIn(this.props.defaultValues, name)

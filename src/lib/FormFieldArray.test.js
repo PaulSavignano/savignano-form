@@ -20,7 +20,6 @@ const TestComponent = ({
   onDelete,
   value,
 }) => {
-  console.log('TestComponent', value)
   return (
     <div>
       <button onClick={() => onAdd()} type="button">

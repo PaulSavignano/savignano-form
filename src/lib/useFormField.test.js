@@ -63,7 +63,6 @@ describe('useFormField', () => {
   it('should throw is name is not provided', () => {
     const errorSpy = jest.fn()
     const MyFormField = props => {
-      console.log('testprops', props)
       useFormField(props)
       return <div />
     }
