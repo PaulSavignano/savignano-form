@@ -1,40 +1,40 @@
 import React from 'react'
-import { shallow } from 'enzyme'
+import {
+  cleanup,
+  render,
+} from '@testing-library/react'
 
-import FormContext from './FormContext'
+import Form from './Form'
+import FormField from './FormField'
 import FormSpy from './FormSpy'
-import getSpiedValues from './utils/getSpiedValues'
 
-const testNames = ['email1', 'email2']
+afterEach(cleanup)
 
-const testValues = {
-  email1: 'test1@test.com',
-  email2: 'test2@test.com',
-  email3: 'test3@test.com'
-}
-
-const testCtx = {
-  errors: {},
-  onBlur: jest.fn(),
-  onChange: jest.fn(),
-  onRegisterField: jest.fn(),
-  onUnregisterField: jest.fn(),
-  touched: {},
-  values: { ...testValues }
-}
-
-const testProps = {
-  children: jest.fn(),
-  names: testNames,
+const initialValues = {
+  firstName: 'Paul',
+  lastName: 'Savignano'
 }
 
 describe('FormSpy', () => {
-  it('should match snapshot', () => {
-    const wrapper = shallow(
-      <FormContext.Provider value={testCtx}>
-        <FormSpy {...testProps} />
-      </FormContext.Provider>
+  it('should match snapshot', async () => {
+    const { asFragment } = render(
+      <Form initialValues={initialValues}>
+        <FormSpy names={['firstName', 'lastName']}>
+          {(values) => (
+            <>
+              <FormField
+                name="firstName"
+                component="input"
+              />
+              <FormField
+                name="firstName"
+                component="input"
+              />
+            </>
+          )}
+        </FormSpy>
+      </Form>
     )
-    expect(wrapper).toMatchSnapshot()
+    expect(asFragment()).toMatchSnapshot()
   })
 })

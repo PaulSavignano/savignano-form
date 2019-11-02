@@ -1,15 +1,15 @@
-import handleEvent from './handleEvent'
+import handleSubmitEvent from './handleSubmitEvent'
 
 
-describe('handleEvent', () => {
+describe('handleSubmitEvent', () => {
   it('should call preventDefault', () => {
     const spy = jest.fn()
-    handleEvent({ preventDefault: spy })
+    handleSubmitEvent({ preventDefault: spy })
     expect(spy).toHaveBeenCalled()
   })
   it('should call stopPropagation', () => {
     const spy = jest.fn()
-    handleEvent({ stopPropagation: spy })
+    handleSubmitEvent({ stopPropagation: spy })
     expect(spy).toHaveBeenCalled()
   })
 })

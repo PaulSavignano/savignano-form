@@ -23,7 +23,7 @@ function FormSubmitStateComponent({
       setIsSuccessIcon(true)
     }
     return () => timeoutId && clearTimeout(timeoutId)
-  }, [isSubmitSuccess])
+  }, [isSubmitSuccess, timeoutId])
   switch (true) {
     case isSuccessIcon:
       return <CheckIcon />

@@ -63,12 +63,15 @@ describe('useFormField', () => {
   it('should throw is name is not provided', () => {
     const errorSpy = jest.fn()
     const MyFormField = props => {
+      console.log('testprops', props)
       useFormField(props)
       return <div />
     }
     mount(
       <ErrorBoundary spy={errorSpy}>
-        <MyFormField {...testProps} name={undefined} />
+        <FormContext.Provider value={testCtx}>
+          <MyFormField {...testProps} name={undefined} />
+        </FormContext.Provider>
       </ErrorBoundary>
     )
     expect(errorSpy.mock.calls[0][0].message).toBe('useFormField requires a name')
@@ -87,6 +90,21 @@ describe('useFormField', () => {
     )
     wrapper.unmount()
     expect(spy).toHaveBeenCalled()
+  })
+
+  it('should NOT unregister field on unmount if isPersistOnUnmount', () => {
+    const spy = jest.fn()
+    const MyFormField = (props) => {
+      useFormField(props)
+      return <div />
+    }
+    const wrapper = mount(
+      <FormContext.Provider value={{ ...testCtx, onUnregisterField: spy }}>
+        <MyFormField {...testProps} isPersistOnUnmount />
+      </FormContext.Provider>
+    )
+    wrapper.unmount()
+    expect(spy).not.toHaveBeenCalled()
   })
 
 })

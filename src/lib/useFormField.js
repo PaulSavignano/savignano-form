@@ -1,4 +1,4 @@
-import { useEffect, useContext, useMemo } from 'react'
+import { useEffect, useContext, useMemo, useCallback } from 'react'
 
 import FormContext from './FormContext'
 import getIn from './utils/getIn'
@@ -18,25 +18,30 @@ function useFormField({
   value,
 }) {
   const ctx = useContext(FormContext)
+  const { onUnregisterField, onRegisterField, onChange: ctxOnChange, onBlur: ctxOnBlur } = ctx
   if (!name) throw Error('useFormField requires a name')
-  useEffect(() => {
-    ctx.onRegisterField({
-      id,
-      name,
-      onBlur,
-      onChange,
-      onFormat,
-      onParse,
-      onValidate,
-      type,
-      value,
-    })
-    return () => {
-      if (!isPersistOnUnmount) {
-        ctx.onUnregisterField({ name })
-      }
+  const onRegister = useCallback(() => onRegisterField({
+    id,
+    name,
+    onBlur,
+    onChange,
+    onFormat,
+    onParse,
+    onValidate,
+    type,
+    value,
+  }), [id, name, onBlur, onChange, onFormat, onParse, onRegisterField, onValidate, type, value])
+  const onUnRegister = useCallback(() => {
+    if (!isPersistOnUnmount) {
+      onUnregisterField({ name })
     }
-  }, [])
+  }, [isPersistOnUnmount, onUnregisterField, name])
+  useEffect(() => {
+    onRegister()
+    return () => {
+      onUnRegister()
+    }
+  }, [onRegister, onUnRegister])
   const stateValue = getIn(ctx.values, name)
   const valueToUse = getValue({ type, onFormat, value: value || stateValue })
   const checkedProps = getCheckedProps({ stateValue, type, value }) || {}
@@ -47,17 +52,11 @@ function useFormField({
     error,
     isTouched,
     name,
-    onBlur: ctx.onBlur,
-    onChange: ctx.onChange,
+    onBlur: ctxOnBlur,
+    onChange: ctxOnChange,
     type,
     value: valueToUse,
-  }), [
-    value,
-    valueToUse,
-    checkedProps.checked,
-    error,
-    isTouched,
-  ])
+  }), [checkedProps, ctxOnBlur, ctxOnChange, error, isTouched, name, type, valueToUse])
 }
 
 export default useFormField

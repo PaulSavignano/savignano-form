@@ -1,3 +1,18 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`FormSpy should match snapshot 1`] = `ShallowWrapper {}`;
+exports[`FormSpy should match snapshot 1`] = `
+<DocumentFragment>
+  <form>
+    <input
+      name="firstName"
+      type="text"
+      value="Paul"
+    />
+    <input
+      name="firstName"
+      type="text"
+      value="Paul"
+    />
+  </form>
+</DocumentFragment>
+`;

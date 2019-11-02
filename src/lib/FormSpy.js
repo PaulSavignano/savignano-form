@@ -7,7 +7,8 @@ import getSpiedValues from './utils/getSpiedValues'
 function FormSpy({ children, names }) {
   const { values } = useContext(FormContext)
   const spiedValues = getSpiedValues({ names, values })
-  return useMemo(() => children({ ...spiedValues }), [spiedValues, names])
+  const memoized = useMemo(() => children({ ...spiedValues }), [children, spiedValues])
+  return memoized
 }
 
 FormSpy.defaultProps = {

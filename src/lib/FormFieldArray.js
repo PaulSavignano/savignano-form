@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo, useState, useRef } from 'react'
+import React, { useContext, useState } from 'react'
 import PropTypes from 'prop-types'
 
 import FormContext from './FormContext'
@@ -6,7 +6,7 @@ import getIn from './utils/getIn'
 import setIn from './utils/setIn'
 
 export function getValueArray(value) {
-  if (value) {
+  if (value && value.length) {
     return value.map((v, i) => i)
   }
   return []

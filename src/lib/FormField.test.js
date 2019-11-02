@@ -1,23 +1,17 @@
 import React from 'react'
-import { mount, shallow } from 'enzyme'
+import {
+  cleanup,
+  render,
+} from '@testing-library/react'
 
-import FormField from './FormField'
-import FormContext from './FormContext'
-
-const testCtx = {
-  errors: {},
-  onBlur: jest.fn(),
-  onChange: jest.fn(),
-  onRegisterField: jest.fn(),
-  onUnregisterField: jest.fn(),
-  touched: {},
-  values: {}
-}
+import Form from './Form'
+import FormField, { getInputProps } from './FormField'
 
 const testProps = {
   component: 'input',
   id: '1',
   name: 'email',
+  label: 'Email',
   onBlur: undefined,
   onChange: undefined,
   onFormat: undefined,
@@ -27,13 +21,34 @@ const testProps = {
   value: undefined
 }
 
+describe('getInputProps', () => {
+  it('should return aria-label only if component is string', () => {
+    const inputProps = getInputProps({
+      component: 'input',
+      label: 'Test',
+      isTouched: false
+    })
+    expect(inputProps).toEqual({ 'aria-label': 'Test' })
+  })
+  it('should return aria-label and isTouched if component NOT a string', () => {
+    const TestComponent = () => <div />
+    const inputProps = getInputProps({
+      component: TestComponent,
+      label: 'Test',
+      isTouched: true
+    })
+    expect(inputProps).toEqual({ label: 'Test', isTouched: true })
+  })
+})
+
 describe('FormField', () => {
   it('should match snapshot', () => {
-    const wrapper = mount(
-      <FormContext.Provider value={testCtx}>
+    const { asFragment } = render(
+      <Form>
         <FormField {...testProps} />
-      </FormContext.Provider>
+      </Form>
     )
-    expect(wrapper).toMatchSnapshot()
+    expect(asFragment()).toMatchSnapshot()
   })
+
 })

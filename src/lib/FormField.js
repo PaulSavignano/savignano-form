@@ -3,7 +3,20 @@ import PropTypes from 'prop-types'
 
 import useFormField from './useFormField'
 
+export function getInputProps({ component, isTouched, label }) {
+  if (typeof component === 'string') {
+    return {
+      'aria-label': label
+    }
+  }
+  return {
+    isTouched,
+    label,
+  }
+}
+
 function FormField({
+  label,
   name,
   id,
   onBlur,
@@ -31,17 +44,11 @@ function FormField({
   })
   return useMemo(() => {
     const { isTouched, ...restFieldProps } = fieldProps
-    const isTouchedProp = typeof Component === 'string' ? {} : { isTouched }
+    const inputProps = getInputProps({ component: Component, label, isTouched })
     return (
-      <Component {...rest} {...restFieldProps} {...isTouchedProp} />
+      <Component {...rest} {...restFieldProps} {...inputProps} />
     )
-  }, [
-    value,
-    fieldProps.value,
-    fieldProps.checked,
-    fieldProps.error,
-    fieldProps.isTouched,
-  ])
+  }, [fieldProps, Component, label, rest])
 }
 
 FormField.defaultProps = {

@@ -1,10 +1,31 @@
 import React, { useContext } from 'react'
-import Context from '../lib/FormContext'
+import FormContext from '../lib/FormContext'
 
 function ViewState() {
-  const ctx = useContext(Context)
+  const {
+    errors,
+    initialValues,
+    isErrors,
+    isSubmitSuccess,
+    isSubmitting,
+    isTouched,
+    submitError,
+    touched,
+    values,
+  } = useContext(FormContext)
+  const state = {
+    errors,
+    initialValues,
+    isErrors,
+    isSubmitSuccess,
+    isSubmitting,
+    isTouched,
+    submitError,
+    touched,
+    values,
+  }
   return (
-    <pre>{JSON.stringify(ctx, null, 2)}</pre>
+    <pre>{JSON.stringify(state, null, 2)}</pre>
   )
 }
 

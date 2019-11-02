@@ -13,17 +13,18 @@ import {
   FormReset,
   FormSubmit,
 } from '../lib'
+
 import FieldArray from './FieldArray'
 import FieldCheckbox from './FieldCheckbox'
-import FieldText from './FieldText'
-import FieldSwitch from './FieldSwitch'
 import FieldRadio from './FieldRadio'
+import FieldSwitch from './FieldSwitch'
+import FieldText from './FieldText'
 import SubmitStateComponent from './SubmitStateComponent'
-import { fetchApi } from './utils'
-import { validateEmail, validateRequired } from './validators'
+import ViewState from './ViewState'
+import fetchApi from './fetchApi'
 import { formatPhone, formatDollar } from './formatters'
 import { parseDollar } from './parsers'
-import ViewState from './ViewState'
+import { validateEmail, validateRequired } from './validators'
 
 const styles = theme => ({
   h3: {
@@ -219,7 +220,7 @@ function App({ classes }) {
           <Typography variant="h4">Field Array</Typography>
           <div className={classes.row}>
             <Typography>Children</Typography>
-            <FormFieldArray name="children" component={FieldArray} />
+
           </div>
         </Card>
 

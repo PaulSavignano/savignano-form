@@ -33,7 +33,19 @@ function FormSubmit(props) {
         ) : children}
       </Comp>
     )
-  }, [isErrors, isSubmitSuccess, isSubmitting, onSubmit, submitError, disabled])
+  }, [
+    SubmitStateComponent,
+    children,
+    disabled,
+    isErrors,
+    isSubmitSuccess,
+    isSubmitting,
+    onClick,
+    onPress,
+    onSubmit,
+    rest,
+    submitError,
+  ])
 }
 
 FormSubmit.defaultProps = {

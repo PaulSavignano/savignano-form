@@ -12,7 +12,7 @@ function FormReset(props) {
       onClick={() => onReset(names)}
       type="button"
     />
-  ), [names])
+  ), [names, onReset, rest])
 }
 
 FormReset.defaultProps = {

@@ -1,3 +1,14 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`FormField should match snapshot 1`] = `ReactWrapper {}`;
+exports[`FormField should match snapshot 1`] = `
+<DocumentFragment>
+  <form>
+    <input
+      aria-label="Email"
+      name="email"
+      type="text"
+      value=""
+    />
+  </form>
+</DocumentFragment>
+`;

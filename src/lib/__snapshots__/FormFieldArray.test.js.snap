@@ -17,7 +17,7 @@ exports[`FormFieldArray should match snapshot 1`] = `
       <ul>
         <li>
           <input
-            label="emails 0"
+            aria-label="emails 0"
             name="emails.0.email"
             type="text"
             value="test1@test.com"

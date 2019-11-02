@@ -5,8 +5,8 @@ import FormContext from './FormContext'
 import setIn from './utils/setIn'
 import getIn from './utils/getIn'
 import isValue from './utils/isValue'
-import handleEvent from './utils/handleEvent'
-
+import handleSubmitEvent from './utils/handleSubmitEvent'
+import handleInputEvent from './utils/handleInputEvent'
 
 class Form extends PureComponent {
   constructor(props) {
@@ -54,7 +54,10 @@ class Form extends PureComponent {
     return undefined
   }
 
-  handleBlurEvent = e => this.handleBlur({ name: e.target.name, value: e.target.value })
+  handleBlurEvent = e => {
+    const { name, value } = handleInputEvent(e)
+    this.handleBlur({ name, value })
+  }
 
   handleChange = ({ name, value }) => {
     const { onChange, onParse, onValidate } = this.fields[name]
@@ -76,15 +79,10 @@ class Form extends PureComponent {
   }
 
   handleChangeEvent = (e) => {
-    if (e && e.target && e.target.name) {
-      const { target } = e
-      const { type } = this.fields[target.name]
-      const isCheckbox = /checkbox/.test(type)
-      const value = isCheckbox ? target.checked : target.value
-      return this.handleChange({ name: target.name, value })
-    }
-    const { name, value } = e
-    return this.handleChange({ name, value })
+    const { name, value, checked } = handleInputEvent(e)
+    const { type } = this.fields[name]
+    const isCheckbox = /checkbox/.test(type)
+    return this.handleChange({ name, value: isCheckbox ? checked : value })
   }
 
   handleOnBlur = ({ name }) => this.setState(state => ({
@@ -204,7 +202,6 @@ class Form extends PureComponent {
   }
 
   handleState = state => {
-    console.log('onState ', state)
     return this.setState(state)
   }
 
@@ -227,7 +224,7 @@ class Form extends PureComponent {
   }
 
   handleSubmit = (e) => {
-    handleEvent(e)
+    handleSubmitEvent(e)
     this.setState({ isSubmitting: true })
     const validationState = this.handleSubmitValidations()
     if (validationState.errors && Object.keys(validationState.errors).length) {

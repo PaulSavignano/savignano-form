@@ -1,9 +1,13 @@
 import React from 'react'
-import { cleanup, render, fireEvent, wait } from '@testing-library/react'
+import {
+  cleanup,
+  fireEvent,
+  render,
+} from '@testing-library/react'
 
 import Form from './Form'
 import FormField from './FormField'
-import FormFieldArray, { getInitialValueArray, getFiltered } from './FormFieldArray'
+import FormFieldArray, { getInitialValueArray, getFiltered, getValueArray } from './FormFieldArray'
 
 const initialValues = {
   emails: [{ email: 'test1@test.com' }]
@@ -50,6 +54,17 @@ const TestComponent = ({
 
 afterEach(cleanup)
 
+describe('getValueArray', () => {
+  it('should return index array from object array', () => {
+    const valueArray = getValueArray([{ email: 'test1@test.com' }, { email: 'test2@test.com' }])
+    expect(valueArray).toEqual([0, 1])
+  })
+  it('should return empty array if value is undefined', () => {
+    const valueArray = getValueArray(undefined)
+    expect(valueArray).toEqual([])
+  })
+})
+
 describe('getInitialValueArray', () => {
   it('should return array of indexes', () => {
     const values = { emails: [{ email: 'test1@test.com' }, { email: 'test2@test.com' }] }
@@ -60,6 +75,11 @@ describe('getInitialValueArray', () => {
     const values = {}
     const initialValueArray = getInitialValueArray({ name: 'emails', values })
     expect(initialValueArray).toEqual([])
+  })
+  it('should return defaultValue indexes if no value or initialValue', () => {
+    const defaultValues = { emails: [{ email: 'test1@test.com' }, { email: 'test2@test.com' }] }
+    const initialValueArray = getInitialValueArray({ name: 'emails', defaultValues })
+    expect(initialValueArray).toEqual([0, 1])
   })
 })
 
@@ -116,7 +136,7 @@ describe('FormFieldArray', () => {
   })
 
   it('should change root array to new objects', () => {
-    const { getByText, queryAllByText, debug } = render(
+    const { getByText, queryAllByText } = render(
       <Form initialValues={initialValues}>
         <FormFieldArray name="emails" component={TestComponent} />
       </Form>
