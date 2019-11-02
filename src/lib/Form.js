@@ -79,6 +79,7 @@ class Form extends PureComponent {
   }
 
   handleChangeEvent = (e) => {
+    console.log('handleChangeEvent ', e)
     const { name, value, checked } = handleInputEvent(e)
     const { type } = this.fields[name]
     const isCheckbox = /checkbox/.test(type)
