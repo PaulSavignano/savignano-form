@@ -20,8 +20,8 @@
   ],
   "license": "MIT",
   "author": "Paul Savignano <paul.savignano@gmail.com> (http://github.com/PaulSavignano)",
-  "main": "dist/bundle",
-  "module": "dist/bundle",
+  "main": "dist/bundle.js",
+  "module": "dist/bundle.js",
   "files": [
     "dist"
   ],
