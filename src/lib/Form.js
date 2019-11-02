@@ -226,6 +226,7 @@ class Form extends PureComponent {
   handleSubmit = (e) => {
     const { onSubmit: onSubmitProp } = this.props
     const fn = onSubmitProp || e
+    console.log('handleSubmit fn ', fn)
     handleSubmitEvent(e)
     this.setState({ isSubmitting: true })
     const validationState = this.handleSubmitValidations()
@@ -267,7 +268,6 @@ class Form extends PureComponent {
       onUnregisterField: this.handleUnregisterField,
       formProps: this.props,
     }
-    console.log('Form ', ctx)
     return (
       <FormContext.Provider value={ctx}>
         <Comp
