@@ -3,13 +3,13 @@ import PropTypes from 'prop-types'
 import TextField from '@material-ui/core/TextField'
 
 function FieldText(props) {
-  const { error, isTouched, onChange, ...rest } = props
+  const { error, isTouched, ...rest } = props
 
   const errorProps = isTouched && error && {
     error: Boolean(error),
     helperText: error
   }
-  return <TextField {...rest} {...errorProps} onChange={e => onChange({ name: e.target.name, value: e.target.value })} margin="normal" />
+  return <TextField {...rest} {...errorProps} margin="normal" />
 }
 
 FieldText.propTypes = {
