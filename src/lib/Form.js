@@ -119,6 +119,7 @@ class Form extends PureComponent {
   }
 
   handleRegisterField = ({ name, ...rest }) => {
+    console.log('handleRegisterField ', name)
     if (this.fields[name]) return undefined
     this.fields[name] = rest
     const initialValue = getIn(this.props.initialValues, name) || getIn(this.props.defaultValues, name)
@@ -267,6 +268,7 @@ class Form extends PureComponent {
       onUnregisterField: this.handleUnregisterField,
       formProps: this.props,
     }
+    console.log('Form ', ctx)
     return (
       <FormContext.Provider value={ctx}>
         <Comp
