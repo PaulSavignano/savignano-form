@@ -8,18 +8,22 @@ const testCtx = {
   isErrors: false,
   isSubmitSuccess: false,
   isSubmitting: false,
+  isTouched: false,
   onSubmit: jest.fn(),
-  submitError: undefined,
+  submitError: ''
 }
 
 describe('useFormSubmit', () => {
   it('should return context', () => {
     const expected = {
-      isSubmitting: testCtx.isSubmitting,
-      isSubmitSuccess: testCtx.isSubmitSuccess,
+      isClean: true,
+      isDisabled: true,
+      isErrors: testCtx.isErrors,
       isSubmitError: false,
-      isDisabled: false,
+      isSubmitSuccess: testCtx.isSubmitSuccess,
+      isSubmitting: testCtx.isSubmitting,
       onSubmit: testCtx.onSubmit,
+      submitError: testCtx.submitError
     }
     const MyFormSubmit = (props) => {
       const hook = useFormSubmit()

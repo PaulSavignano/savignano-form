@@ -16,10 +16,12 @@ const useFormSubmit = () => {
     const isClean = Boolean(!isTouched)
     const isDisabled = isSubmitting || isErrors || isSubmitError || isClean
     return {
-      isSubmitting,
-      isSubmitSuccess,
-      isSubmitError,
+      isClean,
       isDisabled,
+      isErrors,
+      isSubmitError,
+      isSubmitSuccess,
+      isSubmitting,
       onSubmit,
       submitError
     }

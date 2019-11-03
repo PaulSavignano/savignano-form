@@ -110,9 +110,13 @@ describe('Form', () => {
       const spy = jest.fn(arg => arg.errors)
       const wrapper = shallow(<Form {...testProps} onValidate={spy} />)
       wrapper.instance().handleRegisterField(testFields.email)
-      const registeredState = wrapper.instance().state
       wrapper.instance().handleChange({ name, value })
-      expect(spy).toHaveBeenCalledWith(registeredState)
+      const registeredState = wrapper.instance().state
+      const expected = {
+        ...registeredState,
+        isTouched: false
+      }
+      expect(spy).toHaveBeenCalledWith(expected)
     })
 
     it('should parse field value if value and onParse', () => {
