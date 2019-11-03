@@ -60,16 +60,19 @@ class Form extends PureComponent {
   }
 
   handleChange = ({ name, value }) => {
+    const { onValidate: formOnValidate } = this.props
     const { onChange, onParse, onValidate } = this.fields[name]
     const parsedValue = this.handleOnParse({ name, onParse, value })
     const error = this.handleOnValidate({ name, onValidate, value })
     this.setState((state) => {
-      const errors = this.props.onValidate ? this.props.onValidate(state) : state.errors
+      const values = setIn(state.values, name, parsedValue)
+      const errors = setIn(state.errors, name, error)
+      const errorsToSet = formOnValidate ? formOnValidate({ ...state, errors, values }) : errors
       return {
-        errors: setIn(errors, name, error),
+        errors: errorsToSet,
         isTouched: true,
         submitError: '',
-        values: setIn(state.values, name, parsedValue),
+        values,
       }
     })
     if (onChange) {
@@ -226,7 +229,6 @@ class Form extends PureComponent {
   handleSubmit = (e) => {
     const { onSubmit: onSubmitProp } = this.props
     const fn = onSubmitProp || e
-    console.log('handleSubmit fn ', fn)
     handleSubmitEvent(e)
     this.setState({ isSubmitting: true })
     const validationState = this.handleSubmitValidations()
@@ -247,6 +249,7 @@ class Form extends PureComponent {
   }
 
   render() {
+    const { errors } = this.state
     const {
       children,
       component: Comp,
@@ -258,7 +261,7 @@ class Form extends PureComponent {
     } = this.props
     const ctx = {
       ...this.state,
-      isErrors: Boolean(Object.keys(this.state.errors).length),
+      isErrors: Boolean(Object.keys(errors).length),
       onBlur: this.handleBlurEvent,
       onChange: this.handleChangeEvent,
       onRegisterField: this.handleRegisterField,

@@ -7,21 +7,27 @@ const useFormSubmit = () => {
     isErrors,
     isSubmitSuccess,
     isSubmitting,
+    isTouched,
     onSubmit,
     submitError
   } = useContext(FormContext)
   return useMemo(() => {
+    const isSubmitError = Boolean(submitError)
+    const isClean = Boolean(!isTouched)
+    const isDisabled = isSubmitting || isErrors || isSubmitError || isClean
     return {
       isSubmitting,
       isSubmitSuccess,
-      isSubmitError: Boolean(submitError),
-      isDisabled: isSubmitting || isErrors,
-      onSubmit
+      isSubmitError,
+      isDisabled,
+      onSubmit,
+      submitError
     }
   }, [
     isErrors,
     isSubmitSuccess,
     isSubmitting,
+    isTouched,
     onSubmit,
     submitError
   ])

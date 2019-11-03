@@ -71,6 +71,20 @@ const styles = theme => ({
 })
 
 
+function validate({ values }) {
+  const errors = {}
+  const requiredFields = ['lastName']
+  requiredFields.forEach(field => {
+    console.log(values[field])
+    if (!values[field]) {
+
+      errors[field] = 'Required'
+    }
+  })
+  console.log('validate errors', errors)
+  return errors
+}
+
 
 async function handleSubmit(values) {
   try {
@@ -95,7 +109,7 @@ function App({ classes }) {
   }
   return (
     <Form
-
+      onValidate={validate}
       defaultValues={defaultValues}
       initialValues={initialValues}
     >
