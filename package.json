@@ -1,6 +1,6 @@
 {
   "name": "savignano-form",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "description": "React Components for managing form state",
   "repository": {
     "type": "git",
@@ -13,8 +13,10 @@
   "keywords": [
     "React",
     "React Components",
+    "React Native",
     "form",
     "form components",
+    "form state",
     "forms",
     "fields"
   ],

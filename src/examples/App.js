@@ -75,13 +75,10 @@ function validate({ values }) {
   const errors = {}
   const requiredFields = ['lastName']
   requiredFields.forEach(field => {
-    console.log(values[field])
     if (!values[field]) {
-
       errors[field] = 'Required'
     }
   })
-  console.log('validate errors', errors)
   return errors
 }
 
@@ -125,7 +122,12 @@ function App({ classes }) {
               label="First Name"
               name="firstName"
             />
-            <FormField component={FieldText} label="Last Name" name="lastName" />
+            <FormField
+              component={FieldText}
+              label="Last Name"
+              name="lastName"
+              onValidate={validateRequired}
+            />
             <FormField
               component={FieldText}
               label="Email"

@@ -122,13 +122,20 @@ class Form extends PureComponent {
 
   handleRegisterField = ({ name, ...rest }) => {
     if (this.fields[name]) return undefined
+    const { initialValues, defaultValues } = this.props
     this.fields[name] = rest
-    const initialValue = getIn(this.props.initialValues, name) || getIn(this.props.defaultValues, name)
+    const initialValue = getIn(initialValues, name) || getIn(defaultValues, name)
+    const { onValidate } = this.fields[name]
+    const error = this.handleOnValidate({ name, onValidate, value: initialValue })
     if (isValue(initialValue)) {
       return this.setState(state => ({
         initialValues: setIn(state.values, name, initialValue),
         values: setIn(state.values, name, initialValue),
+        errors: setIn(state.errors, name, error)
       }))
+    }
+    if (error) {
+      return this.setState(state => ({ errors: setIn(state.errors, name, error) }))
     }
     return undefined
   }

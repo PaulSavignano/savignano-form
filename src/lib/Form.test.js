@@ -301,7 +301,6 @@ describe('Form', () => {
       const wrapper = shallow(<Form {...testProps} />)
       const spy = jest.fn()
       wrapper.instance().handleRegisterField({ ...testFields.email, onValidate: [spy, spy] })
-      wrapper.instance().handleChange({ name: 'email', value: 'validate@test.com' })
       expect(spy).toHaveBeenCalledTimes(2)
     })
   })
