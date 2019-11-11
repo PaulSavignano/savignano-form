@@ -244,7 +244,6 @@ class Form extends PureComponent {
     }
     return fn(this.state.values)
       .then((res) => {
-        console.log('this.mounted', this.mounted, res)
         if (this.mounted) {
           this.setState({ isSubmitSuccess: true, isSubmitting: false })
           this.handleReset()
