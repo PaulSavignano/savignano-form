@@ -188,6 +188,7 @@ class FormProvider extends PureComponent {
         isTouched: Boolean(Object.keys(nextState.touched).length),
       })
     }
+
     const nextState = Object.keys(this.fields).reduce((a, name) => {
       const state = a
       const initialValue = this.handleResetValue(name)
@@ -210,7 +211,6 @@ class FormProvider extends PureComponent {
     }, {})
     return this.setState({
       ...nextState,
-      errors: {},
       isSubmitSuccess: false,
       isSubmitting: false,
       isTouched: Boolean(Object.keys(nextState.touched).length),
