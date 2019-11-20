@@ -185,6 +185,7 @@ class FormProvider extends PureComponent {
       }, {})
       return this.setState({
         ...nextState,
+        isErrors: Boolean(Object.keys(nextState.errors).length),
         isTouched: Boolean(Object.keys(nextState.touched).length),
       })
     }
@@ -211,6 +212,7 @@ class FormProvider extends PureComponent {
     }, {})
     return this.setState({
       ...nextState,
+      isErrors: Boolean(Object.keys(nextState.errors).length),
       isSubmitSuccess: false,
       isSubmitting: false,
       isTouched: Boolean(Object.keys(nextState.touched).length),
