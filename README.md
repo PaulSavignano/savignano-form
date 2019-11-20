@@ -36,7 +36,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import {
   Form,
- } from 'savignano-flex';
+ } from 'savignano-form';
 
 function App() {
   return (

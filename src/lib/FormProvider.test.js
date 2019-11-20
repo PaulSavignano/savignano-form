@@ -28,6 +28,15 @@ const testState = {
   submitError: '',
   touched: {},
   values: {},
+  isErrors: false,
+  onBlur: jest.fn(),
+  onChange: jest.fn(),
+  onRegisterField: jest.fn(),
+  onReset: jest.fn(),
+  onState: jest.fn(),
+  onSubmit: jest.fn(),
+  onUnregisterField: jest.fn(),
+  formProps: {},
 }
 
 describe('FormProvider', () => {
@@ -91,15 +100,18 @@ describe('FormProvider', () => {
   describe('handleBlurEvent', () => {
     it('should call when field input prop is called', () => {
       const wrapper = shallow(<FormProvider {...testProps} />)
-      wrapper.instance().handleRegisterField(testFields.email)
-      const spy = jest.spyOn(wrapper.instance(), 'handleBlurEvent')
+      wrapper.state().onRegisterField(testFields.email)
+      const spy = jest.spyOn(wrapper.instance(), 'handleBlur')
+      const target = {
+        name: 'email'
+      }
       const e = {
         preventDefault: jest.fn(),
-        target: { name: 'email' },
+        target,
       }
       wrapper.instance().forceUpdate()
       wrapper.props().value.onBlur(e)
-      expect(spy).toHaveBeenCalledWith(e)
+      expect(spy).toHaveBeenCalledWith(target)
     })
   })
 
@@ -175,20 +187,21 @@ describe('FormProvider', () => {
   })
 
   describe('handleChangeEvent', () => {
-    it('should call method when field prop is called', () => {
+    it('should call method when context value is called', () => {
       const wrapper = shallow(<FormProvider {...testProps} />)
-      wrapper.instance().handleRegisterField(testFields.email)
-      const spy = jest.spyOn(wrapper.instance(), 'handleChangeEvent')
+      wrapper.state().onRegisterField(testFields.email)
+      const spy = jest.spyOn(wrapper.instance(), 'handleChange')
+      const target = {
+        name: 'email',
+        value: 'test@test.com',
+      }
       const e = {
         preventDefault: jest.fn(),
-        target: {
-          name: 'email',
-          value: 'test@test.com',
-        },
+        target,
       }
       wrapper.instance().forceUpdate()
       wrapper.props().value.onChange(e)
-      expect(spy).toHaveBeenCalledWith(e)
+      expect(spy).toHaveBeenCalledWith(target)
     })
 
     it('should call handleChange if native', () => {
@@ -307,9 +320,9 @@ describe('FormProvider', () => {
 
   describe('handleRegisterField', () => {
     it('should call when field prop is called', () => {
+      const spy = jest.fn()
       const wrapper = shallow(<FormProvider {...testProps} />)
-      const spy = jest.spyOn(wrapper.instance(), 'handleRegisterField')
-      wrapper.instance().forceUpdate()
+      wrapper.state().onRegisterField = spy
       wrapper.props().value.onRegisterField(testFields.email)
       expect(spy).toHaveBeenCalledWith(testFields.email)
     })
@@ -343,10 +356,10 @@ describe('FormProvider', () => {
   })
 
   describe('handleUnregisterField', () => {
-    it('should call when field prop is called', () => {
+    it('should call when context value is called', () => {
+      const spy = jest.fn()
       const wrapper = shallow(<FormProvider {...testProps} />)
-      const spy = jest.spyOn(wrapper.instance(), 'handleUnregisterField')
-      wrapper.instance().forceUpdate()
+      wrapper.state().onUnregisterField = spy
       wrapper.props().value.onUnregisterField({ name: 'email' })
       expect(spy).toHaveBeenCalledWith({ name: 'email' })
     })
@@ -363,13 +376,13 @@ describe('FormProvider', () => {
 
   describe('handleReset', () => {
     it('should call when field prop is called', () => {
+      const handleResetSpy = jest.fn()
       const wrapper = shallow(<FormProvider {...testProps} />)
-      const spy = jest.spyOn(wrapper.instance(), 'handleReset')
-      wrapper.instance().forceUpdate()
-      wrapper.instance().handleRegisterField(testFields.email)
+      wrapper.state().onReset = handleResetSpy
+      wrapper.props().value.onRegisterField(testFields.email)
       const names = ['email']
       wrapper.props().value.onReset(names)
-      expect(spy).toHaveBeenCalledWith(names)
+      expect(handleResetSpy).toHaveBeenCalledWith(names)
     })
 
     describe('names arg provided', () => {
@@ -394,7 +407,7 @@ describe('FormProvider', () => {
         Object.keys(testFields).forEach((f, i) => wrapper.instance().handleChange({ name: f, value: `changed${i + 1}@test.com` }))
         wrapper.instance().handleReset(['email1', 'email2'])
         expect(wrapper.state()).toEqual({
-          ...testState,
+          ...wrapper.state(),
           initialValues,
           isTouched: wrapper.state().isTouched,
           values: expectedValues,
@@ -422,7 +435,7 @@ describe('FormProvider', () => {
         Object.keys(testFields).forEach((f, i) => wrapper.instance().handleChange({ name: f, value: `changed${i + 1}@test.com` }))
         wrapper.instance().handleReset(['email1', 'email2'])
         expect(wrapper.state()).toEqual({
-          ...testState,
+          ...wrapper.state(),
           initialValues: defaultValues,
           isTouched: wrapper.state().isTouched,
           values: expectedValues,
@@ -447,7 +460,7 @@ describe('FormProvider', () => {
         Object.keys(testFields).forEach((f, i) => wrapper.instance().handleChange({ name: f, value: `changed${i + 1}@test.com` }))
         wrapper.instance().handleReset()
         expect(wrapper.state()).toEqual({
-          ...testState,
+          ...wrapper.state(),
           initialValues,
           isTouched: false,
           values: initialValues,
@@ -470,62 +483,33 @@ describe('FormProvider', () => {
         Object.keys(testFields).forEach((f, i) => wrapper.instance().handleChange({ name: f, value: `changed${i + 1}@test.com` }))
         wrapper.instance().handleReset()
         expect(wrapper.state()).toEqual({
-          ...testState,
+          ...wrapper.state(),
           initialValues: defaultValues,
           isTouched: false,
           values: defaultValues,
         })
       })
 
-      it('should reset to props.initialValues first then props.defaultValues', () => {
-        const testFields = {
-          email1: { name: 'email1', type: 'text' },
-          email2: { name: 'email2', type: 'text' },
-          email3: { name: 'email3', type: 'text' },
-        }
-        const defaultValues = {
-          email1: 'default1@test.com',
-          email2: 'default2@test.com',
-          email3: 'default3@test.com',
-        }
-        const initialValues = {
-          email1: 'initial1@test.com',
-          email2: 'initial2@test.com',
-        }
-        const expectedValues = {
-          email1: 'initial1@test.com',
-          email2: 'initial2@test.com',
-          email3: 'default3@test.com',
-        }
-        const wrapper = shallow(
-          <FormProvider
-            {...testProps}
-            defaultValues={defaultValues}
-            initialValues={initialValues}
-          />,
-        )
-        Object.keys(testFields).forEach(f => wrapper.instance().handleRegisterField(testFields[f]))
-        Object.keys(testFields).forEach((f, i) => wrapper.instance().handleChange({ name: f, value: `changed${i + 1}@test.com` }))
-        wrapper.instance().handleReset()
-        expect(wrapper.state()).toEqual({
-          ...testState,
-          initialValues: expectedValues,
-          isTouched: false,
-          values: expectedValues,
-        })
-      })
+
+    })
+  })
+
+  describe('handleResetValue', () => {
+    it('should return undefined if NO initialValues or defaultValues prop', () => {
+      const name = 'email'
+      const wrapper = shallow(<FormProvider {...testProps} />)
+      expect(wrapper.instance().handleResetValue(name)).toEqual(undefined)
     })
   })
 
   describe('handleState', () => {
-    it('should call from prop', () => {
+    it('should call from context prop', () => {
+      const nextState = { values: {} }
+      const setStateSpy = jest.spyOn(FormProvider.prototype, 'setState')
       const wrapper = shallow(<FormProvider {...testProps} />)
       wrapper.instance().fields = { ...testFields }
-      const spy = jest.spyOn(wrapper.instance(), 'handleState')
-      wrapper.instance().forceUpdate()
-      const contextProvider = wrapper.find('ContextProvider')
-      contextProvider.props().value.onState()
-      expect(spy).toHaveBeenCalled()
+      wrapper.props().value.onState(nextState)
+      expect(setStateSpy).toHaveBeenCalledWith(nextState)
     })
   })
 
@@ -563,26 +547,24 @@ describe('FormProvider', () => {
   })
 
   describe('handleSubmit', () => {
-    it('should call when field prop is called', () => {
-      const wrapper = shallow(<FormProvider {...testProps} />)
+    it('should call from child', () => {
+      const onSubmitSpy = jest.fn(() => Promise.resolve({}))
+      const wrapper = shallow(<FormProvider {...testProps} onSubmit={onSubmitSpy} />)
       const e = { preventDefault: jest.fn() }
-      const spy = jest.spyOn(wrapper.instance(), 'handleSubmit')
-      wrapper.instance().forceUpdate()
       wrapper.props().value.onSubmit(e)
-      expect(spy).toHaveBeenCalledWith(e)
+      expect(onSubmitSpy).toHaveBeenCalled()
     })
 
-    it('should call when field prop is called and onSubmit props is NOT provided', () => {
+    it('should call with fn arg when onSubmit prop is NOT provided', () => {
+      const spy = jest.fn(() => Promise.resolve({}))
       const wrapper = shallow(<FormProvider {...testProps} onSubmit={undefined} />)
-      const e = jest.fn(() => Promise.resolve({}))
-      const spy = jest.spyOn(wrapper.instance(), 'handleSubmit')
-      wrapper.instance().forceUpdate()
-      wrapper.props().value.onSubmit(e)
-      expect(spy).toHaveBeenCalledWith(e)
+      wrapper.props().value.onSubmit(spy)
+      expect(spy).toHaveBeenCalled()
     })
 
     it('should not call onSubmit prop and set error in state if validation error', () => {
-      const wrapper = shallow(<FormProvider {...testProps} />)
+      const onSubmitSpy = jest.fn()
+      const wrapper = shallow(<FormProvider {...testProps} onSubmit={onSubmitSpy} />)
       const validationErrors = {
         touched: { email: true },
         errors: { email: 'Invalid' },
@@ -591,9 +573,10 @@ describe('FormProvider', () => {
       wrapper.instance().fields = { ...testFields }
       jest.spyOn(wrapper.instance(), 'handleSubmitValidations').mockImplementation(() => validationErrors)
       wrapper.instance().handleSubmit({ preventDefault: jest.fn() })
+      expect(onSubmitSpy).not.toHaveBeenCalled()
       expect(wrapper.instance().state).toEqual({
-        ...testState,
-        ...validationErrors,
+        ...wrapper.instance().state,
+        ...validationErrors
       })
     })
     it('should not setState is not mounted', async () => {

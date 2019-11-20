@@ -1,6 +1,6 @@
 {
   "name": "savignano-form",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "React Components for managing form state",
   "repository": {
     "type": "git",

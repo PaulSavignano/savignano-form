@@ -20,6 +20,15 @@ class FormProvider extends PureComponent {
       submitError: '',
       touched: {},
       values: {},
+      isErrors: false,
+      onBlur: this.handleBlurEvent,
+      onChange: this.handleChangeEvent,
+      onRegisterField: this.handleRegisterField,
+      onReset: this.handleReset,
+      onState: this.handleState,
+      onSubmit: this.handleSubmit,
+      onUnregisterField: this.handleUnregisterField,
+      formProps: this.props,
     }
     this.fields = {}
     this.mounted = false
@@ -70,6 +79,7 @@ class FormProvider extends PureComponent {
       const errorsToSet = formOnValidate ? formOnValidate({ ...state, errors, values }) : errors
       return {
         errors: errorsToSet,
+        isErrors: Boolean(Object.keys(errors).length),
         isTouched: true,
         submitError: '',
         values,
@@ -155,7 +165,9 @@ class FormProvider extends PureComponent {
         const state = a
         if (names.includes(name)) {
           const value = this.handleResetValue(name)
-          state.errors = setIn(state.errors, name, undefined)
+          const { onValidate } = this.fields[name]
+          const error = this.handleOnValidate({ name, onValidate, value })
+          state.errors = setIn(state.errors, name, error)
           state.initialValues = setIn(
             state.initialValues,
             name,
@@ -180,6 +192,9 @@ class FormProvider extends PureComponent {
       const state = a
       const initialValue = this.handleResetValue(name)
       const value = this.handleResetValue(name)
+      const { onValidate } = this.fields[name]
+      const error = this.handleOnValidate({ name, onValidate, value })
+      state.errors = setIn(state.errors, name, error)
       state.initialValues = setIn(
         state.initialValues,
         name,
@@ -256,22 +271,9 @@ class FormProvider extends PureComponent {
   }
 
   render() {
-    const { errors } = this.state
     const { children } = this.props
-    const ctx = {
-      ...this.state,
-      isErrors: Boolean(Object.keys(errors).length),
-      onBlur: this.handleBlurEvent,
-      onChange: this.handleChangeEvent,
-      onRegisterField: this.handleRegisterField,
-      onReset: this.handleReset,
-      onState: this.handleState,
-      onSubmit: this.handleSubmit,
-      onUnregisterField: this.handleUnregisterField,
-      formProps: this.props,
-    }
     return (
-      <FormContext.Provider value={ctx}>
+      <FormContext.Provider value={this.state}>
         {children}
       </FormContext.Provider>
     )
