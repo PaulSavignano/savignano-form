@@ -43,7 +43,7 @@ function FormField({
     value,
   })
   return useMemo(() => {
-    const { isTouched, ...restFieldProps } = fieldProps
+    const { isTouched, setValue, ...restFieldProps } = fieldProps
     const inputProps = getInputProps({ component: Component, label, isTouched })
     return (
       <Component {...rest} {...restFieldProps} {...inputProps} />

@@ -1,16 +1,16 @@
-import { useEffect, useContext, useMemo, useCallback } from 'react'
+import { useEffect, useContext, useMemo } from 'react'
 
 import FormContext from './FormContext'
-import getIn from './utils/getIn'
 import getCheckedProps from './utils/getCheckedProps'
+import getIn from './utils/getIn'
 import getValue from './utils/getValue'
 
 function useFormField({
-  name,
   id,
+  isPersistOnUnmount,
+  name,
   onBlur,
   onChange,
-  isPersistOnUnmount,
   onFormat,
   onParse,
   onValidate,
@@ -20,33 +20,45 @@ function useFormField({
   const ctx = useContext(FormContext)
   const { onUnregisterField, onRegisterField, onChange: ctxOnChange, onBlur: ctxOnBlur } = ctx
   if (!name) throw Error('useFormField requires a name')
-  const onRegister = useCallback(() => onRegisterField({
+
+  useEffect(() => {
+    onRegisterField({
+      id,
+      name,
+      onBlur,
+      onChange,
+      onFormat,
+      onParse,
+      onValidate,
+      type,
+      value,
+    })
+    return () => {
+      if (!isPersistOnUnmount) {
+        onUnregisterField({ name })
+      }
+    }
+  }, [
     id,
+    isPersistOnUnmount,
     name,
     onBlur,
     onChange,
     onFormat,
     onParse,
+    onRegisterField,
+    onUnregisterField,
     onValidate,
     type,
-    value,
-  }), [id, name, onBlur, onChange, onFormat, onParse, onRegisterField, onValidate, type, value])
-  const onUnRegister = useCallback(() => {
-    if (!isPersistOnUnmount) {
-      onUnregisterField({ name })
-    }
-  }, [isPersistOnUnmount, onUnregisterField, name])
-  useEffect(() => {
-    onRegister()
-    return () => {
-      onUnRegister()
-    }
-  }, [onRegister, onUnRegister])
+    value
+  ])
+
   const stateValue = getIn(ctx.values, name)
   const valueToUse = getValue({ type, onFormat, value: value || stateValue })
   const checkedProps = getCheckedProps({ stateValue, type, value }) || {}
   const error = getIn(ctx.errors, name)
   const isTouched = Boolean(getIn(ctx.touched, name))
+
   return useMemo(() => ({
     ...checkedProps,
     error,
@@ -56,7 +68,16 @@ function useFormField({
     onChange: ctxOnChange,
     type,
     value: valueToUse,
-  }), [checkedProps, ctxOnBlur, ctxOnChange, error, isTouched, name, type, valueToUse])
+  }), [
+    checkedProps,
+    ctxOnBlur,
+    ctxOnChange,
+    error,
+    isTouched,
+    name,
+    type,
+    valueToUse
+  ])
 }
 
 export default useFormField

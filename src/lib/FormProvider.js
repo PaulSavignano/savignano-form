@@ -53,10 +53,6 @@ class FormProvider extends PureComponent {
 
   handleBlur = ({ name, value }) => {
     const { onBlur } = this.fields[name]
-    this.setState(state => ({
-      isTouched: true,
-      touched: setIn(state.touched, name, true),
-    }))
     if (onBlur) {
       return onBlur(this.getOnProps({ name, value }))
     }
@@ -82,6 +78,7 @@ class FormProvider extends PureComponent {
         isErrors: Boolean(Object.keys(errors).length),
         isTouched: true,
         submitError: '',
+        touched: setIn(state.touched, name, true),
         values,
       }
     })

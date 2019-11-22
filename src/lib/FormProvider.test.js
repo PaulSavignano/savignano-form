@@ -67,17 +67,6 @@ describe('FormProvider', () => {
   })
 
   describe('handleBlur', () => {
-    it('should set touched for blurred field', () => {
-      const wrapper = shallow(<FormProvider {...testProps} />)
-      wrapper.instance().handleRegisterField(testFields.email)
-      wrapper.instance().handleBlur({ name: 'email' })
-      expect(wrapper.instance().state).toEqual({
-        ...wrapper.instance().state,
-        isTouched: true,
-        touched: { email: true },
-      })
-    })
-
     it('should call onBlur field prop is provided and pass form state and methods', () => {
       const name = 'email'
       const value = 'onBlur@test.com'
@@ -121,14 +110,14 @@ describe('FormProvider', () => {
       const value = 'formOnValidate@test.com'
       const spy = jest.fn(arg => arg.errors)
       const wrapper = shallow(<FormProvider {...testProps} onValidate={spy} />)
-      wrapper.instance().handleRegisterField(testFields.email)
-      wrapper.instance().handleChange({ name, value })
-      const registeredState = wrapper.instance().state
-      const expected = {
-        ...registeredState,
-        isTouched: false
+      wrapper.props().value.onRegisterField(testFields.email)
+      wrapper.props().value.onChange({ name, value })
+      const expectedArg = {
+        ...wrapper.instance().state,
+        isTouched: false,
+        touched: {},
       }
-      expect(spy).toHaveBeenCalledWith(expected)
+      expect(spy).toHaveBeenCalledWith(expectedArg)
     })
 
     it('should parse field value if value and onParse', () => {
