@@ -267,7 +267,7 @@ class FormProvider extends PureComponent {
     const { onSubmit: onSubmitProp } = this.props
     const fn = onSubmitProp || e
     handleSubmitEvent(e)
-    this.setState({ isSubmitting: true })
+    this.setState({ isSubmitting: true, isTouched: true })
     const validationState = this.handleSubmitValidations()
     if (validationState.errors && Object.keys(validationState.errors).length) {
       return this.setState({ ...validationState, isSubmitting: false })
