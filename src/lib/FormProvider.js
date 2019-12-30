@@ -13,24 +13,25 @@ class FormProvider extends PureComponent {
     super(props)
     this.state = {
       errors: {},
+      formProps: this.props,
       initialValues: {},
+      isErrors: false,
       isSubmitSuccess: false,
       isSubmitting: false,
       isTouched: false,
-      submitError: '',
-      touched: {},
-      values: {},
-      isErrors: false,
       onBlur: this.handleBlurEvent,
       onChange: this.handleChangeEvent,
       onRegisterField: this.handleRegisterField,
       onReset: this.handleReset,
-      onState: this.handleState,
       onSubmit: this.handleSubmit,
       onUnregisterField: this.handleUnregisterField,
-      formProps: this.props,
+      setFormState: this.handleState,
+      submitError: '',
+      touched: {},
+      values: {},
     }
     this.fields = {}
+    this.initialFields = {}
     this.mounted = false
   }
 
@@ -53,6 +54,10 @@ class FormProvider extends PureComponent {
 
   handleBlur = ({ name, value }) => {
     const { onBlur } = this.fields[name]
+    this.setState(state => ({
+      isTouched: true,
+      touched: setIn(state.touched, name, true),
+    }))
     if (onBlur) {
       return onBlur(this.getOnProps({ name, value }))
     }
@@ -129,14 +134,22 @@ class FormProvider extends PureComponent {
 
   handleRegisterField = ({ name, ...rest }) => {
     if (this.fields[name]) return undefined
-    const { initialValues, defaultValues } = this.props
+    const { isTouched } = this.state
     this.fields[name] = rest
+    if (isTouched) {
+      const isArrayField = /[.[\]]+/.test(name)
+      if (isArrayField) return undefined
+    }
+    if (!isTouched && !this.initialFields[name]) {
+      this.initialFields[name] = rest
+    }
+    const { initialValues, defaultValues } = this.props
     const initialValue = getIn(initialValues, name) || getIn(defaultValues, name)
-    const { onValidate } = this.fields[name]
+    const { onValidate } = rest
     const error = this.handleOnValidate({ name, onValidate, value: initialValue })
     if (isValue(initialValue)) {
       return this.setState(state => ({
-        initialValues: setIn(state.values, name, initialValue),
+        initialValues: setIn(state.initialValues, name, initialValue),
         values: setIn(state.values, name, initialValue),
         errors: setIn(state.errors, name, error)
       }))
@@ -153,16 +166,19 @@ class FormProvider extends PureComponent {
       touched: setIn(state.touched, name, undefined),
       values: setIn(state.values, name, undefined),
     }))
+    if (!this.state.isTouched) {
+      delete this.initialFields[name]
+    }
     delete this.fields[name]
   }
 
   handleReset = (names) => {
     if (names && names.length) {
-      const nextState = Object.keys(this.fields).reduce((a, name) => {
+      const nextState = Object.keys(this.initialFields).reduce((a, name) => {
         const state = a
         if (names.includes(name)) {
           const value = this.handleResetValue(name)
-          const { onValidate } = this.fields[name]
+          const { onValidate } = this.initialFields[name]
           const error = this.handleOnValidate({ name, onValidate, value })
           state.errors = setIn(state.errors, name, error)
           state.initialValues = setIn(
@@ -187,11 +203,11 @@ class FormProvider extends PureComponent {
       })
     }
 
-    const nextState = Object.keys(this.fields).reduce((a, name) => {
+    const nextState = Object.keys(this.initialFields).reduce((a, name) => {
       const state = a
       const initialValue = this.handleResetValue(name)
       const value = this.handleResetValue(name)
-      const { onValidate } = this.fields[name]
+      const { onValidate } = this.initialFields[name]
       const error = this.handleOnValidate({ name, onValidate, value })
       state.errors = setIn(state.errors, name, error)
       state.initialValues = setIn(
@@ -271,6 +287,7 @@ class FormProvider extends PureComponent {
 
   render() {
     const { children } = this.props
+    console.log('FormProvider', this.state.isTouched)
     return (
       <FormContext.Provider value={this.state}>
         {children}

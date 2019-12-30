@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { withStyles } from '@material-ui/core/styles'
+import { makeStyles } from '@material-ui/core/styles'
 import Button from '@material-ui/core/Button'
 import Typography from '@material-ui/core/Typography'
 import Card from '@material-ui/core/Card'
@@ -26,7 +26,7 @@ import { formatPhone, formatDollar } from './formatters'
 import { parseDollar } from './parsers'
 import { validateEmail, validateRequired } from './validators'
 
-const styles = theme => ({
+const useStyles = makeStyles(theme => ({
   h3: {
     display: 'flex',
     flexFlow: 'row nowrap',
@@ -68,7 +68,7 @@ const styles = theme => ({
     flexFlow: 'row wrap',
     alignItems: 'center'
   },
-})
+}))
 
 
 function validate({ values }) {
@@ -92,7 +92,8 @@ async function handleSubmit(values) {
   }
 }
 
-function App({ classes }) {
+function App() {
+  const classes = useStyles()
   const defaultValues = {
     role: 'mother',
     lastName: ''
@@ -102,7 +103,8 @@ function App({ classes }) {
     isPrice: true,
     phone: '444',
     price: 10,
-    email: 'paul@gmail.com'
+    email: 'paul@gmail.com',
+    children: [{ name: 'Weston' }]
   }
   return (
     <Form
@@ -189,39 +191,44 @@ function App({ classes }) {
               type="checkbox"
             />
             <FormSpy names={['isRole']}>
-              {values => (
-                <>
-                  <Typography>Role</Typography>
-                  <FormField
-                    component={FieldRadio}
-                    name="role"
-                    label="mother"
-                    type="radio"
-                    value="mother"
-                  />
-                  <FormField
-                    component={FieldRadio}
-                    name="role"
-                    label="father"
-                    type="radio"
-                    value="father"
-                  />
-                  <FormField
-                    component={FieldRadio}
-                    name="role"
-                    label="son"
-                    type="radio"
-                    value="son"
-                  />
-                  <FormField
-                    component={FieldRadio}
-                    name="role"
-                    label="daughter"
-                    type="radio"
-                    value="daughter"
-                  />
-                </>
-              )}
+              {values => {
+                if (values.isRole) {
+                  return (
+                    <>
+                      <Typography>Role</Typography>
+                      <FormField
+                        component={FieldRadio}
+                        name="role"
+                        label="mother"
+                        type="radio"
+                        value="mother"
+                      />
+                      <FormField
+                        component={FieldRadio}
+                        name="role"
+                        label="father"
+                        type="radio"
+                        value="father"
+                      />
+                      <FormField
+                        component={FieldRadio}
+                        name="role"
+                        label="son"
+                        type="radio"
+                        value="son"
+                      />
+                      <FormField
+                        component={FieldRadio}
+                        name="role"
+                        label="daughter"
+                        type="radio"
+                        value="daughter"
+                      />
+                    </>
+                  )
+                }
+                return null
+              }}
             </FormSpy>
           </div>
           <div className={classes.row}>
@@ -236,7 +243,7 @@ function App({ classes }) {
           <Typography variant="h4">Field Array</Typography>
           <div className={classes.row}>
             <Typography>Children</Typography>
-
+            <FormFieldArray name="children" component={FieldArray} />
           </div>
         </Card>
 
@@ -266,4 +273,4 @@ App.propTypes = {
   classes: PropTypes.shape(Object).isRequired
 }
 
-export default withStyles(styles)(App)
+export default App

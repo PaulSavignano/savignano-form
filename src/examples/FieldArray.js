@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import Button from "@material-ui/core/Button";
+import Button from "@material-ui/core/Button"
 
 import FormField from '../lib/FormField'
 import FieldText from './FieldText'
@@ -18,7 +18,9 @@ function FieldArray({
         <Button
           variant="contained"
           color="primary"
-          onClick={onAdd}
+          onClick={() => onAdd({
+            name: undefined
+          })}
         >
           Add
         </Button>
@@ -49,7 +51,7 @@ function FieldArray({
               X
             </Button>
           </div>
-        );
+        )
       })}
     </div>
   )

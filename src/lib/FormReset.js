@@ -18,11 +18,13 @@ function FormReset(props) {
 FormReset.defaultProps = {
   names: [],
   component: 'button',
+  children: 'Reset'
 }
 
 FormReset.propTypes = {
   component: PropTypes.oneOfType([PropTypes.node, PropTypes.string, PropTypes.object, PropTypes.func]),
-  names: PropTypes.arrayOf(PropTypes.string)
+  names: PropTypes.arrayOf(PropTypes.string),
+  children: PropTypes.oneOfType([PropTypes.node, PropTypes.string, PropTypes.object, PropTypes.func])
 }
 
 export default FormReset

@@ -21,23 +21,24 @@ const testProps = {
 
 const testState = {
   errors: {},
+  formProps: {},
   initialValues: {},
+  isErrors: false,
   isSubmitSuccess: false,
   isSubmitting: false,
   isTouched: false,
-  submitError: '',
-  touched: {},
-  values: {},
-  isErrors: false,
   onBlur: jest.fn(),
   onChange: jest.fn(),
   onRegisterField: jest.fn(),
   onReset: jest.fn(),
-  onState: jest.fn(),
   onSubmit: jest.fn(),
   onUnregisterField: jest.fn(),
-  formProps: {},
+  setFormState: jest.fn(),
+  submitError: '',
+  touched: {},
+  values: {},
 }
+
 
 describe('FormProvider', () => {
   describe('render', () => {
@@ -316,9 +317,18 @@ describe('FormProvider', () => {
       expect(spy).toHaveBeenCalledWith(testFields.email)
     })
 
+    it('should register field', () => {
+      const field = { name: 'firstName', type: 'text' }
+      const wrapper = shallow(<FormProvider {...testProps} />)
+      wrapper.instance().handleRegisterField(field)
+      expect(wrapper.instance().initialFields).toEqual({ [field.name]: { type: field.type } })
+      expect(wrapper.instance().fields).toEqual({ [field.name]: { type: field.type } })
+    })
+
     it('should return if field already has a value is state', () => {
       const wrapper = shallow(<FormProvider {...testProps} />)
-      wrapper.instance().testFields = { ...testFields }
+      wrapper.instance().fields = { ...testFields }
+      wrapper.instance().initialFields = { ...testFields }
       wrapper.setState({ values: { email: 'testing@test.com' } })
       expect(
         wrapper.instance().handleRegisterField({ name: 'email', comp: testFields.email }),
@@ -331,7 +341,7 @@ describe('FormProvider', () => {
         email: 'testing@test.com',
       }
       const wrapper = shallow(<FormProvider {...testProps} initialValues={initialValues} />)
-      wrapper.setState({ values: {} })
+      wrapper.setState({ values: {}, isTouched: true })
       wrapper.instance().handleRegisterField({ name: 'email', comp: testFields.email })
       expect(wrapper.instance().state.values).toEqual(initialValues)
     })
@@ -497,7 +507,7 @@ describe('FormProvider', () => {
       const setStateSpy = jest.spyOn(FormProvider.prototype, 'setState')
       const wrapper = shallow(<FormProvider {...testProps} />)
       wrapper.instance().fields = { ...testFields }
-      wrapper.props().value.onState(nextState)
+      wrapper.props().value.setFormState(nextState)
       expect(setStateSpy).toHaveBeenCalledWith(nextState)
     })
   })
