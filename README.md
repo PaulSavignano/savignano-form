@@ -36,11 +36,14 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import {
   Form,
+  FormField,
+  FormSubmit,
+  FormReset
  } from 'savignano-form';
 
 function App() {
   return (
-    <Form onSubmit={() => console.log('Submitted!')}>
+    <Form onSubmit={(values) => makeApiRequest(values)}>
       <FormField component="input" label="Email" name="email" />
       <FormSubmit component="button">
         Submit
@@ -54,7 +57,7 @@ function App() {
 ```
 
 ## Examples
-[Codesandbox](https://codesandbox.io/s/savignano-form-qr5x1?fontsize=14)
+[Codesandbox](https://codesandbox.io/s/savignano-form-m0yvx?fontsize=14)
 
 ## Contributing
 - see CONTRIBUTING.md
