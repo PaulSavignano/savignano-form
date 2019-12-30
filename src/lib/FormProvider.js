@@ -15,7 +15,6 @@ class FormProvider extends PureComponent {
       errors: {},
       formProps: this.props,
       initialValues: {},
-      isErrors: false,
       isSubmitSuccess: false,
       isSubmitting: false,
       isTouched: false,
@@ -80,7 +79,6 @@ class FormProvider extends PureComponent {
       const errorsToSet = formOnValidate ? formOnValidate({ ...state, errors, values }) : errors
       return {
         errors: errorsToSet,
-        isErrors: Boolean(Object.keys(errors).length),
         isTouched: true,
         submitError: '',
         touched: setIn(state.touched, name, true),
@@ -198,7 +196,6 @@ class FormProvider extends PureComponent {
       }, {})
       return this.setState({
         ...nextState,
-        isErrors: Boolean(Object.keys(nextState.errors).length),
         isTouched: Boolean(Object.keys(nextState.touched).length),
       })
     }
@@ -225,7 +222,6 @@ class FormProvider extends PureComponent {
     }, {})
     return this.setState({
       ...nextState,
-      isErrors: Boolean(Object.keys(nextState.errors).length),
       isSubmitSuccess: false,
       isSubmitting: false,
       isTouched: Boolean(Object.keys(nextState.touched).length),
@@ -287,7 +283,6 @@ class FormProvider extends PureComponent {
 
   render() {
     const { children } = this.props
-    console.log('FormProvider', this.state.isTouched)
     return (
       <FormContext.Provider value={this.state}>
         {children}

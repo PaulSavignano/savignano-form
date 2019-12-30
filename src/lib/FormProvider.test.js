@@ -23,7 +23,6 @@ const testState = {
   errors: {},
   formProps: {},
   initialValues: {},
-  isErrors: false,
   isSubmitSuccess: false,
   isSubmitting: false,
   isTouched: false,
@@ -567,7 +566,6 @@ describe('FormProvider', () => {
       const validationErrors = {
         touched: { email: true },
         errors: { email: 'Invalid' },
-        isErrors: true,
       }
       wrapper.instance().fields = { ...testFields }
       jest.spyOn(wrapper.instance(), 'handleSubmitValidations').mockImplementation(() => validationErrors)

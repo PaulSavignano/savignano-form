@@ -5,7 +5,7 @@ import FormContext from './FormContext'
 import FormSubmit from './FormSubmit'
 
 const testCtx = {
-  isErrors: false,
+  errors: {},
   isSubmitSuccess: false,
   isSubmitting: false,
   onSubmit: jest.fn(),

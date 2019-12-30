@@ -2,9 +2,20 @@ import { useContext, useMemo } from 'react'
 
 import FormContext from './FormContext'
 
+export function isDisabled({
+  isErrors,
+  isSubmitError,
+  isSubmitting,
+  isTouched,
+}) {
+  if (isSubmitting) return true
+  if (isTouched && (isErrors || isSubmitError)) return true
+  return false
+}
+
 const useFormSubmit = () => {
   const {
-    isErrors,
+    errors,
     isSubmitSuccess,
     isSubmitting,
     isTouched,
@@ -12,12 +23,10 @@ const useFormSubmit = () => {
     submitError
   } = useContext(FormContext)
   return useMemo(() => {
+    const isErrors = Boolean(Object.keys(errors).length)
     const isSubmitError = Boolean(submitError)
-    const isClean = Boolean(!isTouched)
-    const isDisabled = isSubmitting || isErrors || isSubmitError || isClean
     return {
-      isClean,
-      isDisabled,
+      isDisabled: isDisabled({ isErrors, isSubmitError, isSubmitting, isTouched }),
       isErrors,
       isSubmitError,
       isSubmitSuccess,
@@ -25,14 +34,7 @@ const useFormSubmit = () => {
       onSubmit,
       submitError
     }
-  }, [
-    isErrors,
-    isSubmitSuccess,
-    isSubmitting,
-    isTouched,
-    onSubmit,
-    submitError
-  ])
+  }, [errors, isSubmitSuccess, isSubmitting, isTouched, onSubmit, submitError])
 }
 
 export default useFormSubmit

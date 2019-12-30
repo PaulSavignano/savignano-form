@@ -5,7 +5,6 @@ function ViewState() {
   const {
     errors,
     initialValues,
-    isErrors,
     isSubmitSuccess,
     isSubmitting,
     isTouched,
@@ -16,7 +15,6 @@ function ViewState() {
   const state = {
     errors,
     initialValues,
-    isErrors,
     isSubmitSuccess,
     isSubmitting,
     isTouched,
