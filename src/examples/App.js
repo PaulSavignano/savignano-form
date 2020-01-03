@@ -77,7 +77,6 @@ const selectOptions = [
   { label: 'Phone', value: 'phone' }
 ]
 
-
 function validate({ values }) {
   const errors = {}
   const requiredFields = ['lastName']
@@ -88,7 +87,6 @@ function validate({ values }) {
   })
   return errors
 }
-
 
 async function handleSubmit(values) {
   try {

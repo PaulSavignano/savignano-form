@@ -6,10 +6,10 @@ import useFormSubmit from './useFormSubmit'
 function FormSubmit(props) {
   const {
     isDisabled,
+    isSubmitError,
     isSubmitSuccess,
     isSubmitting,
     onSubmit,
-    submitError,
   } = useFormSubmit()
   const {
     children,
@@ -30,7 +30,7 @@ function FormSubmit(props) {
       >
         {SubmitStateComponent ? (
           <SubmitStateComponent
-            isSubmitError={Boolean(submitError)}
+            isSubmitError={isSubmitError}
             isSubmitSuccess={isSubmitSuccess}
             isSubmitting={isSubmitting}
           >
@@ -39,7 +39,7 @@ function FormSubmit(props) {
         ) : children}
       </Comp>
     )
-  }, [SubmitStateComponent, children, disabled, isDisabled, isSubmitSuccess, isSubmitting, onClick, onPress, onSubmit, rest, submitError])
+  }, [SubmitStateComponent, children, disabled, isDisabled, isSubmitError, isSubmitSuccess, isSubmitting, onClick, onPress, onSubmit, rest])
 }
 
 FormSubmit.defaultProps = {

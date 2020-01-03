@@ -23,6 +23,7 @@ const testState = {
   errors: {},
   formProps: {},
   initialValues: {},
+  isSubmitFailure: false,
   isSubmitSuccess: false,
   isSubmitting: false,
   isTouched: false,

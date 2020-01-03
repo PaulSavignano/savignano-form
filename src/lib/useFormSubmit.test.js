@@ -6,9 +6,9 @@ import useFormSubmit, { isDisabled } from './useFormSubmit'
 
 const testCtx = {
   errors: {},
+  isSubmitFailure: false,
   isSubmitSuccess: false,
   isSubmitting: false,
-  isTouched: false,
   onSubmit: jest.fn(),
   submitError: ''
 }
@@ -18,26 +18,26 @@ describe('isDisabled', () => {
     const props = {
       isErrors: false,
       isSubmitError: false,
+      isSubmitFailure: false,
       isSubmitting: true,
-      isTouched: false,
     }
     expect(isDisabled(props)).toEqual(true)
   })
-  it('should return true if isTouched and isErrors', () => {
+  it('should return true if isSubmitFailure and isErrors', () => {
     const props = {
       isErrors: true,
       isSubmitError: false,
+      isSubmitFailure: true,
       isSubmitting: false,
-      isTouched: true,
     }
     expect(isDisabled(props)).toEqual(true)
   })
-  it('should return true if isTouched and isSubmitError', () => {
+  it('should return true if isSubmitFailure and isSubmitError', () => {
     const props = {
       isErrors: false,
       isSubmitError: true,
+      isSubmitFailure: true,
       isSubmitting: false,
-      isTouched: true,
     }
     expect(isDisabled(props)).toEqual(true)
   })
@@ -65,7 +65,7 @@ describe('useFormSubmit', () => {
       </FormContext.Provider>
     )
   })
-  it('should return isDisabled of true if isTouched and is', () => {
+  it('should return isDisabled of true if isSubmitFailure and is', () => {
     const expected = {
       isDisabled: false,
       isErrors: false,

@@ -15,6 +15,7 @@ class FormProvider extends PureComponent {
       errors: {},
       formProps: this.props,
       initialValues: {},
+      isSubmitFailure: false,
       isSubmitSuccess: false,
       isSubmitting: false,
       isTouched: false,
@@ -222,6 +223,7 @@ class FormProvider extends PureComponent {
     }, {})
     return this.setState({
       ...nextState,
+      isSubmitFailure: false,
       isSubmitSuccess: false,
       isSubmitting: false,
       isTouched: Boolean(Object.keys(nextState.touched).length),
@@ -266,7 +268,7 @@ class FormProvider extends PureComponent {
     this.setState({ isSubmitting: true, isTouched: true })
     const validationState = this.handleSubmitValidations()
     if (validationState.errors && Object.keys(validationState.errors).length) {
-      return this.setState({ ...validationState, isSubmitting: false })
+      return this.setState({ ...validationState, isSubmitting: false, isSubmitFailure: true })
     }
     return fn(this.state.values)
       .then((res) => {

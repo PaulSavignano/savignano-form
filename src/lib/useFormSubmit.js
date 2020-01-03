@@ -6,19 +6,19 @@ export function isDisabled({
   isErrors,
   isSubmitError,
   isSubmitting,
-  isTouched,
+  isSubmitFailure,
 }) {
   if (isSubmitting) return true
-  if (isTouched && (isErrors || isSubmitError)) return true
+  if (isSubmitFailure && (isErrors || isSubmitError)) return true
   return false
 }
 
 const useFormSubmit = () => {
   const {
     errors,
+    isSubmitFailure,
     isSubmitSuccess,
     isSubmitting,
-    isTouched,
     onSubmit,
     submitError
   } = useContext(FormContext)
@@ -26,7 +26,7 @@ const useFormSubmit = () => {
     const isErrors = Boolean(Object.keys(errors).length)
     const isSubmitError = Boolean(submitError)
     return {
-      isDisabled: isDisabled({ isErrors, isSubmitError, isSubmitting, isTouched }),
+      isDisabled: isDisabled({ isErrors, isSubmitError, isSubmitting, isSubmitFailure }),
       isErrors,
       isSubmitError,
       isSubmitSuccess,
@@ -34,7 +34,7 @@ const useFormSubmit = () => {
       onSubmit,
       submitError
     }
-  }, [errors, isSubmitSuccess, isSubmitting, isTouched, onSubmit, submitError])
+  }, [errors, isSubmitFailure, isSubmitSuccess, isSubmitting, onSubmit, submitError])
 }
 
 export default useFormSubmit
