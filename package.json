@@ -1,6 +1,6 @@
 {
   "name": "savignano-form",
-  "version": "0.2.8",
+  "version": "0.2.9",
   "description": "React Components for managing form state",
   "repository": {
     "type": "git",
@@ -22,7 +22,7 @@
   ],
   "license": "MIT",
   "author": "Paul Savignano <paul.savignano@gmail.com> (http://github.com/PaulSavignano)",
-  "main": "dist/index.js",
+  "main": "dist/index",
   "module": "dist/index.js",
   "files": [
     "dist"

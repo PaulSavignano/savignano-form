@@ -60,14 +60,10 @@ function useFormFieldArray({ name }) {
   }
 
   useEffect(() => {
-    console.log('value', value, 'lastValue.current', lastValueArray.current, 'touched', Boolean(getIn(touched, name)))
     if (value.length !== lastValueArray.current.length) {
       const isTouched = Boolean(getIn(touched, name))
       if (!isTouched) {
         setValueArray(getInitialValueArray({ name, value, initialValues, defaultValues }))
-      }
-      if (isTouched) {
-        console.log('got it')
       }
       lastValueArray.current = getValueArray(value)
     }

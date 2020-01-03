@@ -4,6 +4,7 @@ import { makeStyles } from '@material-ui/core/styles'
 import Button from '@material-ui/core/Button'
 import Typography from '@material-ui/core/Typography'
 import Card from '@material-ui/core/Card'
+import MenuItem from '@material-ui/core/MenuItem'
 
 import {
   Form,
@@ -34,8 +35,8 @@ const useStyles = makeStyles(theme => ({
     justifyContent: 'center',
   },
   Card: {
-    margin: 8,
-    padding: 8,
+    margin: theme.spacing(2),
+    padding: theme.spacing(1),
   },
   main: {
     padding: 4,
@@ -58,9 +59,9 @@ const useStyles = makeStyles(theme => ({
   switch: {
     width: '100%'
   },
-  textField: {
-    marginLeft: theme.spacing.unit,
-    marginRight: theme.spacing.unit,
+  FormField: {
+    marginLeft: theme.spacing(1),
+    marginRight: theme.spacing(1),
     width: 200
   },
   row: {
@@ -69,6 +70,12 @@ const useStyles = makeStyles(theme => ({
     alignItems: 'center'
   },
 }))
+
+const selectOptions = [
+  { label: 'Select Type', value: undefined },
+  { label: 'Email', value: 'email' },
+  { label: 'Phone', value: 'phone' }
+]
 
 
 function validate({ values }) {
@@ -120,23 +127,27 @@ function App() {
           <Typography variant="h4">Simple</Typography>
           <div className={classes.row}>
             <FormField
+              className={classes.FormField}
               component={FieldText}
               label="First Name"
               name="firstName"
             />
             <FormField
+              className={classes.FormField}
               component={FieldText}
               label="Last Name"
               name="lastName"
               onValidate={validateRequired}
             />
             <FormField
+              className={classes.FormField}
               component={FieldText}
               label="Email"
               name="email"
               onValidate={[validateRequired, validateEmail]}
             />
             <FormField
+              className={classes.FormField}
               component={FieldText}
               label="Phone"
               name="phone"
@@ -144,6 +155,21 @@ function App() {
               onFormat={formatPhone}
               isPersistOnUnmount={false}
             />
+            <FormField
+              className={classes.FormField}
+              component={FieldText}
+              label="Select Contact Method"
+              name="contactMethod"
+              onValidate={validateRequired}
+              isPersistOnUnmount={false}
+              select
+            >
+              {selectOptions.map(option => (
+                <MenuItem key={option.label} value={option.value}>
+                  {option.label}
+                </MenuItem>
+              ))}
+            </FormField>
             <FormReset
               variant="contained"
               component={Button}
@@ -158,6 +184,7 @@ function App() {
           <Typography variant="h4">Spy on Values</Typography>
           <div className={classes.row}>
             <FormField
+              className={classes.FormField}
               component={FieldSwitch}
               label="Is Price"
               name="isPrice"
@@ -185,6 +212,7 @@ function App() {
           </div>
           <div className={classes.row}>
             <FormField
+              className={classes.FormField}
               component={FieldSwitch}
               label="Is Role"
               name="isRole"
@@ -197,6 +225,7 @@ function App() {
                     <>
                       <Typography>Role</Typography>
                       <FormField
+                        className={classes.FormField}
                         component={FieldRadio}
                         name="role"
                         label="mother"
@@ -204,6 +233,7 @@ function App() {
                         value="mother"
                       />
                       <FormField
+                        className={classes.FormField}
                         component={FieldRadio}
                         name="role"
                         label="father"
@@ -211,6 +241,7 @@ function App() {
                         value="father"
                       />
                       <FormField
+                        className={classes.FormField}
                         component={FieldRadio}
                         name="role"
                         label="son"
@@ -218,6 +249,7 @@ function App() {
                         value="son"
                       />
                       <FormField
+                        className={classes.FormField}
                         component={FieldRadio}
                         name="role"
                         label="daughter"
@@ -233,7 +265,12 @@ function App() {
           </div>
           <div className={classes.row}>
             <Typography>Has Dog</Typography>
-            <FormField component={FieldCheckbox} name="hasDog" type="checkbox" />
+            <FormField
+              className={classes.FormField}
+              component={FieldCheckbox}
+              name="hasDog"
+              type="checkbox"
+            />
           </div>
         </Card>
 
