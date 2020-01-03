@@ -8,6 +8,7 @@ import FormSpy from './FormSpy'
 import FormSubmit from './FormSubmit'
 import useForm from './useForm'
 import useFormField from './useFormField'
+import useFormReset from './useFormReset'
 import useFormSubmit from './useFormSubmit'
 
 export {
@@ -21,5 +22,6 @@ export {
   FormSubmit,
   useForm,
   useFormField,
+  useFormReset,
   useFormSubmit,
 }
