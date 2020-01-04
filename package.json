@@ -1,6 +1,6 @@
 {
   "name": "savignano-form",
-  "version": "0.3.4",
+  "version": "0.3.5",
   "description": "React components and hooks for managing form state",
   "repository": {
     "type": "git",
@@ -25,7 +25,6 @@
   "license": "MIT",
   "author": "Paul Savignano <paul.savignano@gmail.com> (http://github.com/PaulSavignano)",
   "main": "dist/index",
-  "module": "dist/index",
   "typings": "dist/index",
   "files": [
     "dist"
