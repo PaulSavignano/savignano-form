@@ -1,64 +1,86 @@
+/* eslint-disable import/no-extraneous-dependencies */
 import React from 'react'
 import PropTypes from 'prop-types'
 import Button from "@material-ui/core/Button"
+import Typography from '@material-ui/core/Typography'
+import makeStyles from '@material-ui/core/styles/makeStyles'
 
-import FormField from '../lib/FormField'
-import FieldText from './FieldText'
+import { useFormFieldArray } from '../lib'
+import TextField from './TextField'
+import { validateRequired } from './validators'
 
-function FieldArray({
-  name,
-  onAdd,
-  onChange,
-  onDelete,
-  value
-}) {
+const useStyles = makeStyles(theme => ({
+  itemContainer: {
+    display: 'flex',
+    flexFlow: 'row nowrap',
+    alignItems: 'center',
+    padding: theme.spacing(1)
+  },
+  item: {
+    margin: theme.spacing(1),
+  },
+}))
+
+function FieldArray({ label, name }) {
+  const {
+    onAdd,
+    onChange,
+    onDelete,
+    value
+  } = useFormFieldArray({ name })
+  const classes = useStyles()
   return (
-    <div style={{ margin: 16 }}>
-      <div>
+    <div>
+      <div className={classes.itemContainer}>
+        <Typography
+          className={classes.item}
+        >
+          {label}
+        </Typography>
         <Button
+          className={classes.item}
           variant="contained"
           color="primary"
-          onClick={() => onAdd({
-            name: undefined
-          })}
+          onClick={onAdd}
         >
           Add
         </Button>
       </div>
-
-      {value.map((v, i) => {
-        return (
-          <div
-            key={`${name} ${i}`}
-            style={{
-              display: "flex",
-              flexFlow: "row nowrap",
-              alignItems: "center"
-            }}
-          >
-            <FormField
-              name={`${name}.${i}.name`}
-              component={FieldText}
-              label={`${name} ${i}`}
-              id={`${name} ${i}`}
-            />
-            <Button
-              variant="contained"
-              color="secondary"
-              size="small"
-              onClick={() => onDelete(i)}
+      <div>
+        {value.map((v, i) => {
+          return (
+            <div
+              key={`${name} ${i}`}
+              className={classes.itemContainer}
             >
-              X
-            </Button>
-          </div>
-        )
-      })}
+              <TextField
+                className={classes.item}
+                name={`${name}.${i}.name`}
+                label={`${name} ${i}`}
+                id={`${name} ${i}`}
+                onValidate={validateRequired}
+              />
+              <Button
+                className={classes.item}
+                variant="contained"
+                color="secondary"
+                size="small"
+                onClick={() => onDelete(i)}
+              >
+                X
+              </Button>
+            </div>
+          )
+        })}
+      </div>
+
     </div>
   )
 }
 
 FieldArray.propTypes = {
-  error: PropTypes.string
+  label: PropTypes.string.isRequired,
+  name: PropTypes.string.isRequired,
 }
 
 export default FieldArray

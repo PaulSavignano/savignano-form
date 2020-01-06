@@ -8,25 +8,34 @@ import getValue from './utils/getValue'
 function useFormField({
   id,
   isPersistOnUnmount,
+  label,
   name,
-  onBlur,
-  onChange,
+  onBlur: onBlurCallback,
+  onChange: onChangeCallback,
   onFormat,
   onParse,
   onValidate,
   type = 'text',
   value,
 }) {
-  const ctx = useContext(FormContext)
-  const { onUnregisterField, onRegisterField, onChange: ctxOnChange, onBlur: ctxOnBlur } = ctx
+  const {
+    errors,
+    onBlur,
+    onChange,
+    onRegisterField,
+    onUnregisterField,
+    touched,
+    values,
+  } = useContext(FormContext)
   if (!name) throw Error('useFormField requires a name')
 
   useEffect(() => {
     onRegisterField({
       id,
       name,
-      onBlur,
-      onChange,
+      label,
+      onBlur: onBlurCallback,
+      onChange: onChangeCallback,
       onFormat,
       onParse,
       onValidate,
@@ -38,46 +47,25 @@ function useFormField({
         onUnregisterField({ name })
       }
     }
-  }, [
-    id,
-    isPersistOnUnmount,
-    name,
-    onBlur,
-    onChange,
-    onFormat,
-    onParse,
-    onRegisterField,
-    onUnregisterField,
-    onValidate,
-    type,
-    value
-  ])
+  }, [id, isPersistOnUnmount, label, name, onBlurCallback, onChangeCallback, onFormat, onParse, onRegisterField, onUnregisterField, onValidate, type, value])
 
-  const stateValue = getIn(ctx.values, name)
+  const stateValue = getIn(values, name)
   const valueToUse = getValue({ type, onFormat, value: value || stateValue })
   const checkedProps = getCheckedProps({ stateValue, type, value }) || {}
-  const error = getIn(ctx.errors, name)
-  const isTouched = Boolean(getIn(ctx.touched, name))
+  const error = getIn(errors, name)
+  const isTouched = Boolean(getIn(touched, name))
 
   return useMemo(() => ({
     ...checkedProps,
     error,
+    label,
     isTouched,
     name,
-    onBlur: ctxOnBlur,
-    onChange: ctxOnChange,
+    onBlur,
+    onChange,
     type,
     value: valueToUse,
-  }), [
-    checkedProps,
-    ctxOnBlur,
-    ctxOnChange,
-    error,
-    isTouched,
-    name,
-    type,
-    valueToUse
-  ])
+  }), [checkedProps, error, isTouched, label, name, onBlur, onChange, type, valueToUse])
 }
 
 export default useFormField

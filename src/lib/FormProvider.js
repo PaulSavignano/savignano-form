@@ -76,10 +76,10 @@ class FormProvider extends PureComponent {
     const error = this.handleOnValidate({ name, onValidate, value })
     this.setState((state) => {
       const values = setIn(state.values, name, parsedValue)
-      const errors = setIn(state.errors, name, error)
-      const errorsToSet = formOnValidate ? formOnValidate({ ...state, errors, values }) : errors
+      const formErrors = formOnValidate ? formOnValidate({ ...state, errors: state.errors, getIn, setIn }) : state.errors
+      const errors = setIn(formErrors, name, error)
       return {
-        errors: errorsToSet,
+        errors,
         isTouched: true,
         submitError: '',
         touched: setIn(state.touched, name, true),
@@ -93,6 +93,7 @@ class FormProvider extends PureComponent {
   }
 
   handleChangeEvent = (e) => {
+    console.log(e.target)
     const { name, value, checked } = handleInputEvent(e)
     const { type } = this.fields[name]
     const isCheckbox = /checkbox/.test(type)

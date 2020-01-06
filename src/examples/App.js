@@ -1,25 +1,23 @@
 import React from 'react'
-import PropTypes from 'prop-types'
-import { makeStyles } from '@material-ui/core/styles'
 import Button from '@material-ui/core/Button'
-import Typography from '@material-ui/core/Typography'
 import Card from '@material-ui/core/Card'
 import MenuItem from '@material-ui/core/MenuItem'
+import Typography from '@material-ui/core/Typography'
+import makeStyles from '@material-ui/core/styles/makeStyles'
 
 import {
   Form,
-  FormField,
-  FormFieldArray,
-  FormSpy,
   FormReset,
+  FormSpy,
   FormSubmit,
 } from '../lib'
 
+import './App.css'
 import FieldArray from './FieldArray'
-import FieldCheckbox from './FieldCheckbox'
-import FieldRadio from './FieldRadio'
-import FieldSwitch from './FieldSwitch'
-import FieldText from './FieldText'
+import Checkbox from './Checkbox'
+import Radio from './Radio'
+import Switch from './Switch'
+import TextField from './TextField'
 import SubmitStateComponent from './SubmitStateComponent'
 import ViewState from './ViewState'
 import fetchApi from './fetchApi'
@@ -59,7 +57,7 @@ const useStyles = makeStyles(theme => ({
   switch: {
     width: '100%'
   },
-  FormField: {
+  formField: {
     marginLeft: theme.spacing(1),
     marginRight: theme.spacing(1),
     width: 200
@@ -77,12 +75,11 @@ const selectOptions = [
   { label: 'Phone', value: 'phone' }
 ]
 
-function validate({ values }) {
-  const errors = {}
+function validate({ values, errors, setIn }) {
   const requiredFields = ['lastName']
   requiredFields.forEach(field => {
     if (!values[field]) {
-      errors[field] = 'Required'
+      setIn(errors, field, 'Required')
     }
   })
   return errors
@@ -118,44 +115,42 @@ function App() {
       initialValues={initialValues}
     >
       <main className={classes.main}>
-        <div className={classes.h3}>
-          <Typography variant="h3">Savignano-Form</Typography>
-        </div>
+        <Typography
+          className={classes.h3}
+          variant="h3"
+        >
+          Savignano-Form
+        </Typography>
         <Card className={classes.Card}>
           <Typography variant="h4">Simple</Typography>
           <div className={classes.row}>
-            <FormField
-              className={classes.FormField}
-              component={FieldText}
+            <TextField
+              className={classes.formField}
               label="First Name"
               name="firstName"
             />
-            <FormField
-              className={classes.FormField}
-              component={FieldText}
+            <TextField
+              className={classes.formField}
               label="Last Name"
               name="lastName"
               onValidate={validateRequired}
             />
-            <FormField
-              className={classes.FormField}
-              component={FieldText}
+            <TextField
+              className={classes.formField}
               label="Email"
               name="email"
               onValidate={[validateRequired, validateEmail]}
             />
-            <FormField
-              className={classes.FormField}
-              component={FieldText}
+            <TextField
+              className={classes.formField}
               label="Phone"
               name="phone"
               onValidate={validateRequired}
               onFormat={formatPhone}
               isPersistOnUnmount={false}
             />
-            <FormField
-              className={classes.FormField}
-              component={FieldText}
+            <TextField
+              className={classes.formField}
               label="Select Contact Method"
               name="contactMethod"
               onValidate={validateRequired}
@@ -167,7 +162,7 @@ function App() {
                   {option.label}
                 </MenuItem>
               ))}
-            </FormField>
+            </TextField>
             <FormReset
               variant="contained"
               component={Button}
@@ -181,9 +176,8 @@ function App() {
         <Card className={classes.Card}>
           <Typography variant="h4">Spy on Values</Typography>
           <div className={classes.row}>
-            <FormField
-              className={classes.FormField}
-              component={FieldSwitch}
+            <Switch
+              className={classes.formField}
               label="Is Price"
               name="isPrice"
               type="checkbox"
@@ -193,8 +187,7 @@ function App() {
                 if (values.isPrice) {
                   return (
                     <>
-                      <FormField
-                        component={FieldText}
+                      <TextField
                         label="Price"
                         name="price"
                         onValidate={validateRequired}
@@ -209,49 +202,34 @@ function App() {
             </FormSpy>
           </div>
           <div className={classes.row}>
-            <FormField
-              className={classes.FormField}
-              component={FieldSwitch}
+            <Switch
+              className={classes.formField}
               label="Is Role"
               name="isRole"
-              type="checkbox"
             />
             <FormSpy names={['isRole']}>
               {values => {
                 if (values.isRole) {
                   return (
                     <>
-                      <Typography>Role</Typography>
-                      <FormField
-                        className={classes.FormField}
-                        component={FieldRadio}
+                      <Radio
                         name="role"
                         label="mother"
-                        type="radio"
                         value="mother"
                       />
-                      <FormField
-                        className={classes.FormField}
-                        component={FieldRadio}
+                      <Radio
                         name="role"
                         label="father"
-                        type="radio"
                         value="father"
                       />
-                      <FormField
-                        className={classes.FormField}
-                        component={FieldRadio}
+                      <Radio
                         name="role"
                         label="son"
-                        type="radio"
                         value="son"
                       />
-                      <FormField
-                        className={classes.FormField}
-                        component={FieldRadio}
+                      <Radio
                         name="role"
                         label="daughter"
-                        type="radio"
                         value="daughter"
                       />
                     </>
@@ -262,24 +240,17 @@ function App() {
             </FormSpy>
           </div>
           <div className={classes.row}>
-            <Typography>Has Dog</Typography>
-            <FormField
-              className={classes.FormField}
-              component={FieldCheckbox}
+            <Checkbox
+              className={classes.formField}
               name="hasDog"
+              label="Has Dog"
               type="checkbox"
             />
           </div>
         </Card>
-
-
-
         <Card className={classes.Card}>
           <Typography variant="h4">Field Array</Typography>
-          <div className={classes.row}>
-            <Typography>Children</Typography>
-            <FormFieldArray name="children" component={FieldArray} />
-          </div>
+          <FieldArray name="children" label="Children" />
         </Card>
 
         <div className={classes.buttonContainer}>
@@ -294,7 +265,11 @@ function App() {
           >
             Submit
           </FormSubmit>
-          <FormReset variant="contained" component={Button} className={classes.button}>
+          <FormReset
+            variant="contained"
+            component={Button}
+            className={classes.button}
+          >
             Reset
           </FormReset>
         </div>
@@ -302,10 +277,6 @@ function App() {
       </main>
     </Form>
   )
-}
-
-App.propTypes = {
-  classes: PropTypes.shape(Object).isRequired
 }
 
 export default App
