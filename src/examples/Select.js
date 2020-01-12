@@ -1,15 +1,13 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import MuiSelect from '@material-ui/core/Select'
-import makeStyles from '@material-ui/core/styles/makeStyles'
+import Chip from '@material-ui/core/Chip'
+import FormControl from '@material-ui/core/FormControl'
+import FormHelperText from '@material-ui/core/FormHelperText'
 import Input from '@material-ui/core/Input'
 import InputLabel from '@material-ui/core/InputLabel'
 import MenuItem from '@material-ui/core/MenuItem'
-import FormControl from '@material-ui/core/FormControl'
-import ListItemText from '@material-ui/core/ListItemText'
-import Checkbox from '@material-ui/core/Checkbox'
-import Chip from '@material-ui/core/Chip'
-import FormHelperText from '@material-ui/core/FormHelperText'
+import MuiSelect from '@material-ui/core/Select'
+import makeStyles from '@material-ui/core/styles/makeStyles'
 
 import { useFormField } from '../lib'
 
@@ -32,9 +30,6 @@ const useStyles = makeStyles(theme => ({
 }))
 
 function Select({
-  InputProps,
-  SelectProps,
-  children,
   className,
   label,
   name,
@@ -43,7 +38,6 @@ function Select({
   onFormat,
   onParse,
   onValidate,
-  select,
   style,
   options,
   id: idProp,
@@ -66,7 +60,7 @@ function Select({
   })
   const classes = useStyles()
   return (
-    <FormControl className={classNames(classes.FormControl, className)} error={error}>
+    <FormControl className={classNames(classes.FormControl, className)} error={error} style={style}>
       <InputLabel id={`label-${id}`}>{label}</InputLabel>
       <MuiSelect
         labelId={`label-${id}`}
@@ -98,20 +92,16 @@ function Select({
 }
 
 Select.defaultProps = {
-  SelectProps: undefined,
-  children: undefined,
   className: undefined,
   onBlur: undefined,
   onChange: undefined,
   onFormat: undefined,
   onParse: undefined,
   onValidate: undefined,
-  select: false,
+  style: undefined
 }
 
 Select.propTypes = {
-  SelectProps: PropTypes.instanceOf(Object),
-  children: PropTypes.arrayOf(PropTypes.node),
   className: PropTypes.string,
   label: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
@@ -120,7 +110,7 @@ Select.propTypes = {
   onFormat: PropTypes.func,
   onParse: PropTypes.func,
   onValidate: PropTypes.oneOfType([PropTypes.func, PropTypes.arrayOf(PropTypes.func)]),
-  select: PropTypes.bool,
+  style: PropTypes.instanceOf(Object),
 }
 
 export default Select
