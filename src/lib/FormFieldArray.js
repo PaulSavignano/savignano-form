@@ -5,19 +5,25 @@ import useFormFieldArray from './useFormFieldArray'
 
 function FormFieldArray({ name, component: Component, ...rest }) {
   const {
-    onAdd,
-    onChange,
+    onPush,
+    onPop,
+    onShift,
+    onUnshift,
     onDelete,
-    value,
+    onChange,
+    values,
   } = useFormFieldArray({ name })
   return (
     <Component
       {...rest}
       name={name}
-      onAdd={onAdd}
+      onPush={onPush}
+      onPop={onPop}
+      onShift={onShift}
+      onUnshift={onUnshift}
       onDelete={onDelete}
       onChange={onChange}
-      value={value}
+      values={values}
     />
   )
 }

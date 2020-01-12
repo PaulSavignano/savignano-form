@@ -1,31 +1,15 @@
 import React from 'react'
-import { mount } from 'enzyme'
+import { renderHook, act } from '@testing-library/react-hooks'
 
 import FormContext from './FormContext'
 import useForm from './useForm'
-
-const testCtx = {
-  errors: {},
-  onBlur: jest.fn(),
-  onChange: jest.fn(),
-  onRegisterField: jest.fn(),
-  onUnregisterField: jest.fn(),
-  touched: {},
-  values: {}
-}
+import { testCtx } from './FormProvider.test'
 
 
 describe('useForm', () => {
   it('should return context', () => {
-    const MyForm = props => {
-      const hook = useForm()
-      expect(hook).toEqual(testCtx)
-      return <div />
-    }
-    mount(
-      <FormContext.Provider value={testCtx}>
-        <MyForm />
-      </FormContext.Provider>
-    )
+    const wrapper = ({ children }) => <FormContext.Provider value={testCtx}>{children}</FormContext.Provider>
+    const { result } = renderHook(() => useForm(), { wrapper })
+    expect(result.current).toEqual(testCtx)
   })
 })

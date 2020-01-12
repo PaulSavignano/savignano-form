@@ -17,7 +17,7 @@ const TestComponent = ({
   onAdd,
   onChange,
   onDelete,
-  value,
+  values,
 }) => {
   return (
     <div>
@@ -31,7 +31,7 @@ const TestComponent = ({
         Change
       </button>
       <ul>
-        {value.map((v, i) => (
+        {values.map((v, i) => (
           <li key={i}>
             <FormField
               name={`${name}.${i}.email`}

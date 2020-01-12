@@ -1,14 +1,10 @@
-import { useContext, useMemo } from 'react'
 import PropTypes from 'prop-types'
 
-import FormContext from './FormContext'
-import getSpiedValues from './utils/getSpiedValues'
+import useFormSpy from './useFormSpy'
 
 function FormSpy({ children, names }) {
-  const { values } = useContext(FormContext)
-  const spiedValues = getSpiedValues({ names, values })
-  const memoized = useMemo(() => children({ ...spiedValues }), [children, spiedValues])
-  return memoized
+  const { values } = useFormSpy({ names })
+  return children(values)
 }
 
 FormSpy.defaultProps = {

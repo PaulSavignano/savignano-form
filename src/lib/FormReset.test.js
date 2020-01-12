@@ -10,7 +10,8 @@ const testProps = {
 }
 
 const testCtx = {
-  onReset: jest.fn()
+  onReset: jest.fn(),
+  touched: {},
 }
 
 describe('FormReset', () => {
@@ -25,6 +26,7 @@ describe('FormReset', () => {
   it('should call onReset when clicked', () => {
     const spy = jest.fn()
     const ctx = {
+      ...testCtx,
       onReset: spy
     }
     const wrapper = mount(

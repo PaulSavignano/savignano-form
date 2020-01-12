@@ -41,7 +41,7 @@ function Radio({
         />
       )}
       label={label}
-      labelPlacement="start"
+      labelPlacement="end"
     />
   )
 }

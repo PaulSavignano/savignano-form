@@ -5,3 +5,9 @@
   margin: 15px auto;
   width: 640px;
 }
+
+.row {
+  display: flex;
+  flex-flow: row wrap;
+  align-items: center
+}

@@ -1,18 +1,21 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import React from 'react'
+import React, { useMemo } from 'react'
 import PropTypes from 'prop-types'
 import Button from "@material-ui/core/Button"
-import Typography from '@material-ui/core/Typography'
 import makeStyles from '@material-ui/core/styles/makeStyles'
+import AddIcon from '@material-ui/icons/Add'
+import CancelIcon from '@material-ui/icons/Cancel'
+import InputAdornment from '@material-ui/core/InputAdornment'
+import IconButton from '@material-ui/core/IconButton'
 
-import { useFormFieldArray } from '../lib'
 import TextField from './TextField'
+import { useFormFieldArray } from '../lib'
 import { validateRequired } from './validators'
 
 const useStyles = makeStyles(theme => ({
-  itemContainer: {
+  root: {
     display: 'flex',
-    flexFlow: 'row nowrap',
+    flexFlow: 'row wrap',
     alignItems: 'center',
     padding: theme.spacing(1)
   },
@@ -21,61 +24,57 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
+
 function FieldArray({ label, name }) {
   const {
-    onAdd,
     onChange,
     onDelete,
-    value
+    onPop,
+    onPush,
+    onShift,
+    onUnshift,
+    values,
   } = useFormFieldArray({ name })
   const classes = useStyles()
-  return (
-    <div>
-      <div className={classes.itemContainer}>
-        <Typography
-          className={classes.item}
-        >
-          {label}
-        </Typography>
+  const { length } = values
+  return useMemo(() => {
+    return (
+      <div className={classes.root}>
         <Button
           className={classes.item}
-          variant="contained"
           color="primary"
-          onClick={onAdd}
+          onClick={() => onUnshift({})}
+          startIcon={<AddIcon />}
+          variant="contained"
         >
-          Add
+          {label}
         </Button>
+        {length && values.map((v, i) => (
+          <TextField
+            key={`${name} ${i}`}
+            className={classes.item}
+            name={`${name}.${i}.name`}
+            label={`${name} ${i + 1}`}
+            id={`${name} ${i}`}
+            onValidate={[validateRequired]}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label={`${name} delete ${i}`}
+                    onClick={() => onDelete(i)}
+                  >
+                    <CancelIcon />
+                  </IconButton>
+                </InputAdornment>
+              )
+            }}
+          />
+        ))}
       </div>
-      <div>
-        {value.map((v, i) => {
-          return (
-            <div
-              key={`${name} ${i}`}
-              className={classes.itemContainer}
-            >
-              <TextField
-                className={classes.item}
-                name={`${name}.${i}.name`}
-                label={`${name} ${i}`}
-                id={`${name} ${i}`}
-                onValidate={validateRequired}
-              />
-              <Button
-                className={classes.item}
-                variant="contained"
-                color="secondary"
-                size="small"
-                onClick={() => onDelete(i)}
-              >
-                X
-              </Button>
-            </div>
-          )
-        })}
-      </div>
+    )
 
-    </div>
-  )
+  }, [classes.item, classes.root, label, length, name, onDelete, onUnshift, values])
 }
 
 FieldArray.propTypes = {

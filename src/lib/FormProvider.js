@@ -53,11 +53,18 @@ class FormProvider extends PureComponent {
   })
 
   handleBlur = ({ name, value }) => {
-    const { onBlur } = this.fields[name]
-    this.setState(state => ({
-      isTouched: true,
-      touched: setIn(state.touched, name, true),
-    }))
+    const { onValidate: formOnValidate } = this.props
+    const { onBlur, onValidate } = this.fields[name]
+    const error = this.handleOnValidate({ name, onValidate, value })
+    this.setState(state => {
+      const formErrors = formOnValidate ? formOnValidate({ ...state, errors: state.errors, getIn, setIn }) : state.errors
+      const errors = setIn(formErrors, name, error)
+      return {
+        isTouched: true,
+        touched: setIn(state.touched, name, true),
+        errors,
+      }
+    })
     if (onBlur) {
       return onBlur(this.getOnProps({ name, value }))
     }
@@ -82,7 +89,7 @@ class FormProvider extends PureComponent {
         errors,
         isTouched: true,
         submitError: '',
-        touched: setIn(state.touched, name, true),
+        ...typeof value === 'boolean' && { touched: setIn(state.touched, name, true) },
         values,
       }
     })
@@ -93,7 +100,6 @@ class FormProvider extends PureComponent {
   }
 
   handleChangeEvent = (e) => {
-    console.log(e.target)
     const { name, value, checked } = handleInputEvent(e)
     const { type } = this.fields[name]
     const isCheckbox = /checkbox/.test(type)
@@ -123,50 +129,46 @@ class FormProvider extends PureComponent {
   handleOnValidate = ({ name, onValidate, value }) => {
     if (!onValidate) return undefined
     if (Array.isArray(onValidate)) {
-      return onValidate.reduce((a, v) => {
-        let error = a
-        error = v(this.getOnProps({ name, value }))
-        return error
-      }, {})
+      const error = onValidate.reduce((a, v) => {
+        const e = v(this.getOnProps({ name, value }))
+        if (e) {
+          a = e
+        }
+        return a
+      }, undefined)
+      return error
     }
     return onValidate(this.getOnProps({ name, value }))
   }
 
   handleRegisterField = ({ name, ...rest }) => {
     if (this.fields[name]) return undefined
+
     const { isTouched } = this.state
     this.fields[name] = rest
-    if (isTouched) {
-      const isArrayField = /[.[\]]+/.test(name)
-      if (isArrayField) return undefined
-    }
     if (!isTouched && !this.initialFields[name]) {
       this.initialFields[name] = rest
     }
-    const { initialValues, defaultValues } = this.props
-    const initialValue = getIn(initialValues, name) || getIn(defaultValues, name)
-    const { onValidate } = rest
-    const error = this.handleOnValidate({ name, onValidate, value: initialValue })
-    if (isValue(initialValue)) {
+    const { defaultValues, initialValues } = this.props
+    const isArrayField = /[.[\]]+/.test(name)
+    const value = (isTouched && isArrayField) ? undefined : (getIn(initialValues, name) || getIn(defaultValues, name))
+    if (isValue(value)) {
       return this.setState(state => ({
-        initialValues: setIn(state.initialValues, name, initialValue),
-        values: setIn(state.values, name, initialValue),
-        errors: setIn(state.errors, name, error)
+        initialValues: setIn(state.initialValues, name, value),
+        values: setIn(state.values, name, value),
       }))
-    }
-    if (error) {
-      return this.setState(state => ({ errors: setIn(state.errors, name, error) }))
     }
     return undefined
   }
 
   handleUnregisterField = ({ name }) => {
+    const { isTouched } = this.state
     this.setState(state => ({
       errors: setIn(state.errors, name, undefined),
       touched: setIn(state.touched, name, undefined),
       values: setIn(state.values, name, undefined),
     }))
-    if (!this.state.isTouched) {
+    if (!isTouched) {
       delete this.initialFields[name]
     }
     delete this.fields[name]
@@ -174,61 +176,38 @@ class FormProvider extends PureComponent {
 
   handleReset = (names) => {
     if (names && names.length) {
-      const nextState = Object.keys(this.initialFields).reduce((a, name) => {
-        const state = a
-        if (names.includes(name)) {
+      return this.setState(state => {
+        const nextState = names.reduce((a, name) => {
           const value = this.handleResetValue(name)
-          const { onValidate } = this.initialFields[name]
-          const error = this.handleOnValidate({ name, onValidate, value })
-          state.errors = setIn(state.errors, name, error)
-          state.initialValues = setIn(
-            state.initialValues,
-            name,
-            value,
-          )
-          state.touched = setIn(state.touched, name, undefined)
-          state.values = setIn(state.values, name, value)
-          return state
-        }
-        state.errors = setIn(state.errors, name, getIn(this.state.errors, name))
-        state.initialValues = setIn(state.initialValues, name, this.handleResetValue(name))
-        state.touched = setIn(state.touched, name, getIn(this.state.touched, name))
-        state.values = setIn(state.values, name, getIn(this.state.values, name))
-        return state
-      }, {})
-      return this.setState({
-        ...nextState,
-        isTouched: Boolean(Object.keys(nextState.touched).length),
+          a.errors = setIn(a.errors, name, undefined)
+          a.initialValues = setIn(a.initialValues, name, value)
+          a.touched = setIn(a.touched, name, undefined)
+          a.values = setIn(a.values, name, value)
+          a.isTouched = Boolean(Object.keys(a.touched).length)
+          return a
+        }, { ...state })
+        return nextState
       })
     }
-
-    const nextState = Object.keys(this.initialFields).reduce((a, name) => {
-      const state = a
-      const initialValue = this.handleResetValue(name)
-      const value = this.handleResetValue(name)
-      const { onValidate } = this.initialFields[name]
-      const error = this.handleOnValidate({ name, onValidate, value })
-      state.errors = setIn(state.errors, name, error)
-      state.initialValues = setIn(
-        state.initialValues,
-        name,
-        initialValue,
-      )
-      state.touched = setIn(
-        state.touched,
-        name,
-        undefined,
-      )
-      state.values = setIn(state.values, name, value)
-      return state
-    }, {})
-    return this.setState({
-      ...nextState,
-      isSubmitFailure: false,
-      isSubmitSuccess: false,
-      isSubmitting: false,
-      isTouched: Boolean(Object.keys(nextState.touched).length),
-      submitError: '',
+    return this.setState(state => {
+      const nextState = Object.keys(this.initialFields).reduce((a, name) => {
+        const initialValue = this.handleResetValue(name)
+        const value = this.handleResetValue(name)
+        a.errors = setIn(a.errors, name, undefined)
+        a.initialValues = setIn(a.initialValues, name, initialValue)
+        a.touched = setIn(a.touched, name, undefined)
+        a.values = setIn(a.values, name, value)
+        return a
+      }, {})
+      return {
+        ...state,
+        ...nextState,
+        isSubmitFailure: false,
+        isSubmitSuccess: false,
+        isSubmitting: false,
+        isTouched: false,
+        submitError: '',
+      }
     })
   }
 

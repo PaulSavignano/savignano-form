@@ -3,41 +3,9 @@ import { shallow } from 'enzyme'
 
 import FormProvider from './FormProvider'
 import getIn from './utils/getIn'
+import setIn from './utils/setIn'
 
-const testFields = {
-  email: {
-    name: 'email',
-    type: 'text',
-  },
-}
-
-
-const testProps = {
-  children: <div />,
-  defaultValues: {},
-  initialValues: {},
-  onSubmit: jest.fn(() => Promise.resolve({})),
-}
-
-const testState = {
-  errors: {},
-  formProps: {},
-  initialValues: {},
-  isSubmitFailure: false,
-  isSubmitSuccess: false,
-  isSubmitting: false,
-  isTouched: false,
-  onBlur: jest.fn(),
-  onChange: jest.fn(),
-  onRegisterField: jest.fn(),
-  onReset: jest.fn(),
-  onSubmit: jest.fn(),
-  onUnregisterField: jest.fn(),
-  setFormState: jest.fn(),
-  submitError: '',
-  touched: {},
-  values: {},
-}
+import { testFields, testProps, testState } from './testData'
 
 
 describe('FormProvider', () => {
@@ -85,6 +53,20 @@ describe('FormProvider', () => {
         value,
       })
     })
+    it('should call forms onValidate function when provided', () => {
+      const spy = jest.fn()
+      const name = 'email'
+      const value = 'onBlur@test.com'
+      const wrapper = shallow(<FormProvider {...testProps} onValidate={spy} />)
+      wrapper.instance().handleRegisterField({ ...testFields.email, onBlur: spy })
+      const state = wrapper.state()
+      wrapper.instance().handleBlur({ name, value })
+      expect(spy).toHaveBeenCalledWith({
+        ...state,
+        getIn,
+        setIn,
+      })
+    })
   })
 
   describe('handleBlurEvent', () => {
@@ -109,15 +91,17 @@ describe('FormProvider', () => {
     it('should call forms onValidate prop with form state', () => {
       const name = 'email'
       const value = 'formOnValidate@test.com'
-      const spy = jest.fn(arg => arg.errors)
+      const spy = jest.fn()
       const wrapper = shallow(<FormProvider {...testProps} onValidate={spy} />)
       wrapper.props().value.onRegisterField(testFields.email)
-      wrapper.props().value.onChange({ name, value })
       const expectedArg = {
-        ...wrapper.instance().state,
+        ...wrapper.state(),
         isTouched: false,
+        getIn,
+        setIn,
         touched: {},
       }
+      wrapper.props().value.onChange({ name, value })
       expect(spy).toHaveBeenCalledWith(expectedArg)
     })
 
@@ -292,7 +276,7 @@ describe('FormProvider', () => {
       ).toBeUndefined()
     })
 
-    it('should call testFields onValidate prop', () => {
+    it('should call fields onValidate prop', () => {
       const onValidate = () => 'invalid'
       const wrapper = shallow(<FormProvider {...testProps} />)
       wrapper.instance().handleRegisterField({ ...testFields.email, onValidate })
@@ -300,12 +284,25 @@ describe('FormProvider', () => {
       expect(wrapper.state().errors).toEqual({ email: 'invalid' })
     })
 
-    it('should iterate an array of onValidate functions if passed an array', () => {
+
+    it('should return last error if array of onValidate functions and each has an error', () => {
       const wrapper = shallow(<FormProvider {...testProps} />)
-      const spy = jest.fn()
-      wrapper.instance().handleRegisterField({ ...testFields.email, onValidate: [spy, spy] })
-      expect(spy).toHaveBeenCalledTimes(2)
+      const expectedError = 'Required2'
+      const onValidate = [() => 'Required', () => expectedError]
+      wrapper.props().value.onRegisterField({ ...testFields.email, onValidate })
+      wrapper.props().value.onChange({ name: 'email', value: 'changed@test.com' })
+      expect(wrapper.state().errors.email).toEqual(expectedError)
     })
+
+    it('should return error if array of onValidate functions', () => {
+      const wrapper = shallow(<FormProvider {...testProps} />)
+      const expectedError = 'Required'
+      const onValidate = [() => expectedError, () => undefined]
+      wrapper.props().value.onRegisterField({ ...testFields.email, onValidate })
+      wrapper.props().value.onChange({ name: 'email', value: 'changed@test.com' })
+      expect(wrapper.state().errors.email).toEqual(expectedError)
+    })
+
   })
 
   describe('handleRegisterField', () => {

@@ -1,3 +1,4 @@
+/* eslint-disable import/no-extraneous-dependencies */
 import React from 'react'
 import Button from '@material-ui/core/Button'
 import Card from '@material-ui/core/Card'
@@ -13,69 +14,72 @@ import {
 } from '../lib'
 
 import './App.css'
-import FieldArray from './FieldArray'
 import Checkbox from './Checkbox'
+import FieldArray from './FieldArray'
 import Radio from './Radio'
+import Select from './Select'
+import SubmitStateComponent from './SubmitStateComponent'
 import Switch from './Switch'
 import TextField from './TextField'
-import SubmitStateComponent from './SubmitStateComponent'
 import ViewState from './ViewState'
 import fetchApi from './fetchApi'
 import { formatPhone, formatDollar } from './formatters'
 import { parseDollar } from './parsers'
-import { validateEmail, validateRequired } from './validators'
+import { validateEmail, validatePhone, validateRequired } from './validators'
 
 const useStyles = makeStyles(theme => ({
-  h3: {
-    display: 'flex',
-    flexFlow: 'row nowrap',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  Card: {
-    margin: theme.spacing(2),
-    padding: theme.spacing(1),
-  },
   main: {
-    padding: 4,
     display: 'flex',
     flexFlow: 'column',
+    padding: theme.spacing(1),
+  },
+  Typography: {
+    margin: theme.spacing(1),
+    padding: theme.spacing(1),
+  },
+  Card: {
+    margin: theme.spacing(1),
+  },
+  padding: {
+    padding: theme.spacing(1)
   },
   buttonContainer: {
-    padding: 4,
-    display: 'flex',
-    flexFlow: 'row wrap',
     alignItems: 'center',
-    justifyContent: 'flex-end'
+    display: 'flex',
+    flex: '1 1 auto',
+    flexFlow: 'row wrap',
+    justifyContent: 'flex-end',
+    padding: theme.spacing(1),
   },
   button: {
-    margin: 4,
+    margin: theme.spacing(1),
   },
-  input: {
-    display: 'none'
+  TextField: {
+    margin: theme.spacing(1),
+    minWidth: 200,
   },
-  switch: {
-    width: '100%'
-  },
-  formField: {
-    marginLeft: theme.spacing(1),
-    marginRight: theme.spacing(1),
-    width: 200
-  },
-  row: {
-    display: 'flex',
-    flexFlow: 'row wrap',
-    alignItems: 'center'
-  },
+  field: {
+    margin: theme.spacing(1)
+  }
 }))
 
-const selectOptions = [
+const contactOptions = [
   { label: 'Select Type', value: undefined },
   { label: 'Email', value: 'email' },
   { label: 'Phone', value: 'phone' }
 ]
 
-function validate({ values, errors, setIn }) {
+const dayOptions = [
+  { label: 'Sunday', value: 'sunday' },
+  { label: 'Monday', value: 'monday' },
+  { label: 'Tuesday', value: 'tuesday' },
+  { label: 'Wednesday', value: 'wednesday' },
+  { label: 'Thursday', value: 'thursday' },
+  { label: 'Friday', value: 'friday' },
+  { label: 'Saturday', value: 'saturday' },
+]
+
+function formValidate({ values, errors, setIn }) {
   const requiredFields = ['lastName']
   requiredFields.forEach(field => {
     if (!values[field]) {
@@ -97,160 +101,158 @@ async function handleSubmit(values) {
 function App() {
   const classes = useStyles()
   const defaultValues = {
-    role: 'mother',
-    lastName: ''
+    setPrice: false,
+    role: 'fullStack',
   }
   const initialValues = {
     firstName: 'Paul',
-    isPrice: true,
-    phone: '444',
-    price: 10,
-    email: 'paul@gmail.com',
-    children: [{ name: 'Weston' }]
+    lastName: 'Savignano',
+    price: 10000,
+    libraries: [{ name: 'React' }, { name: 'Redux' }]
   }
   return (
     <Form
-      onValidate={validate}
+      onValidate={formValidate}
       defaultValues={defaultValues}
       initialValues={initialValues}
     >
       <main className={classes.main}>
-        <Typography
-          className={classes.h3}
-          variant="h3"
-        >
+        <Typography className={classes.Typography} align="center" variant="h4">
           Savignano-Form
         </Typography>
-        <Card className={classes.Card}>
-          <Typography variant="h4">Simple</Typography>
-          <div className={classes.row}>
-            <TextField
-              className={classes.formField}
-              label="First Name"
-              name="firstName"
-            />
-            <TextField
-              className={classes.formField}
-              label="Last Name"
-              name="lastName"
-              onValidate={validateRequired}
-            />
-            <TextField
-              className={classes.formField}
-              label="Email"
-              name="email"
-              onValidate={[validateRequired, validateEmail]}
-            />
-            <TextField
-              className={classes.formField}
-              label="Phone"
-              name="phone"
-              onValidate={validateRequired}
-              onFormat={formatPhone}
-              isPersistOnUnmount={false}
-            />
-            <TextField
-              className={classes.formField}
-              label="Select Contact Method"
-              name="contactMethod"
-              onValidate={validateRequired}
-              isPersistOnUnmount={false}
-              select
-            >
-              {selectOptions.map(option => (
-                <MenuItem key={option.label} value={option.value}>
-                  {option.label}
-                </MenuItem>
-              ))}
-            </TextField>
-            <FormReset
-              variant="contained"
-              component={Button}
-              names={['firstName', 'lastName', 'email', 'phone']}
-            >
-              Reset Values
-            </FormReset>
+
+        <Card className={classes.Card} elevation={2}>
+          <Typography className={classes.Typography} variant="h5">Simple</Typography>
+          <div className={classes.padding}>
+            <div className="row">
+              <TextField
+                className={classes.TextField}
+                label="First Name"
+                name="firstName"
+              />
+              <TextField
+                className={classes.TextField}
+                label="Last Name"
+                name="lastName"
+                onValidate={validateRequired}
+              />
+              <TextField
+                className={classes.TextField}
+                label="Email"
+                name="email"
+                onValidate={[validateRequired, validateEmail]}
+              />
+              <TextField
+                className={classes.TextField}
+                label="Phone"
+                name="phone"
+                onValidate={[validateRequired, validatePhone]}
+                onFormat={formatPhone}
+              />
+              <TextField
+                className={classes.TextField}
+                label="Select Contact Method"
+                name="contactMethod"
+                onValidate={validateRequired}
+                select
+              >
+                {contactOptions.map(option => (
+                  <MenuItem key={option.label} value={option.value}>
+                    {option.label}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </div>
+            <div className="row">
+              <div className={classes.buttonContainer}>
+                <FormReset
+                  className={classes.button}
+                  component={Button}
+                  names={['firstName', 'lastName', 'phone', 'contactMethod', 'email']}
+                  variant="contained"
+                >
+                  Partial Reset
+                </FormReset>
+              </div>
+            </div>
           </div>
         </Card>
 
-        <Card className={classes.Card}>
-          <Typography variant="h4">Spy on Values</Typography>
-          <div className={classes.row}>
-            <Switch
-              className={classes.formField}
-              label="Is Price"
-              name="isPrice"
-              type="checkbox"
-            />
-            <FormSpy names={['isPrice']}>
-              {values => {
-                if (values.isPrice) {
-                  return (
+        <Card className={classes.Card} elevation={2}>
+          <Typography className={classes.Typography} variant="h5">Spy on Values</Typography>
+          <FormSpy names={['isAvailable', 'setPrice', 'setRole']}>
+            {values => (
+              <div className={classes.padding}>
+                <div className="row">
+                  <Checkbox
+                    className={classes.field}
+                    name="isAvailable"
+                    label="Is Available"
+                  />
+                  {values.isAvailable ? (
+                    <Select
+                      name="availability"
+                      label="Availability"
+                      options={dayOptions}
+                      onValidate={validateRequired}
+                      className={classes.TextField}
+                    />
+                  ) : null}
+                </div>
+                <div className="row">
+                  <Switch
+                    className={classes.field}
+                    label="Set Price"
+                    name="setPrice"
+                  />
+                  {values.setPrice ? (
+                    <TextField
+                      label="Price"
+                      name="price"
+                      onValidate={validateRequired}
+                      onFormat={formatDollar}
+                      onParse={parseDollar}
+                      className={classes.TextField}
+                    />
+                  ) : null}
+                </div>
+                <div className="row">
+                  <Switch
+                    className={classes.field}
+                    label="Set Role"
+                    name="setRole"
+                  />
+                  {values.setRole ? (
                     <>
-                      <TextField
-                        label="Price"
-                        name="price"
-                        onValidate={validateRequired}
-                        onFormat={formatDollar}
-                        onParse={parseDollar}
+                      <Radio
+                        className={classes.field}
+                        name="role"
+                        label="Front End"
+                        value="frontEnd"
+                      />
+                      <Radio
+                        className={classes.field}
+                        name="role"
+                        label="Back End"
+                        value="backEnd"
+                      />
+                      <Radio
+                        className={classes.field}
+                        name="role"
+                        label="Full Stack"
+                        value="fullStack"
                       />
                     </>
-                  )
-                }
-                return null
-              }}
-            </FormSpy>
-          </div>
-          <div className={classes.row}>
-            <Switch
-              className={classes.formField}
-              label="Is Role"
-              name="isRole"
-            />
-            <FormSpy names={['isRole']}>
-              {values => {
-                if (values.isRole) {
-                  return (
-                    <>
-                      <Radio
-                        name="role"
-                        label="mother"
-                        value="mother"
-                      />
-                      <Radio
-                        name="role"
-                        label="father"
-                        value="father"
-                      />
-                      <Radio
-                        name="role"
-                        label="son"
-                        value="son"
-                      />
-                      <Radio
-                        name="role"
-                        label="daughter"
-                        value="daughter"
-                      />
-                    </>
-                  )
-                }
-                return null
-              }}
-            </FormSpy>
-          </div>
-          <div className={classes.row}>
-            <Checkbox
-              className={classes.formField}
-              name="hasDog"
-              label="Has Dog"
-              type="checkbox"
-            />
-          </div>
+                  ) : null}
+                </div>
+              </div>
+            )}
+          </FormSpy>
         </Card>
-        <Card className={classes.Card}>
-          <Typography variant="h4">Field Array</Typography>
-          <FieldArray name="children" label="Children" />
+
+        <Card className={classes.Card} elevation={2}>
+          <Typography className={classes.Typography} variant="h5">Field Array</Typography>
+          <FieldArray name="libraries" label="Libraries" />
         </Card>
 
         <div className={classes.buttonContainer}>
@@ -276,6 +278,7 @@ function App() {
         <ViewState />
       </main>
     </Form>
+
   )
 }
 

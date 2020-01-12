@@ -2,41 +2,105 @@ import React from 'react'
 import { mount } from 'enzyme'
 
 import FormContext from './FormContext'
-import useFormField from './useFormField'
+import useFormField, { getValue } from './useFormField'
+import getIn from './utils/getIn'
 
-class ErrorBoundary extends React.Component {
-  componentDidCatch(error) {
-    this.props.spy(error)
+describe('getValue', () => {
+  const testProps = {
+    errors: {},
+    formValue: 'testing',
+    onFormat: undefined,
+    radioValue: undefined,
+    touched: {},
+    type: 'text',
+    values: {},
   }
+  it('should return empty string if !value and type text', () => {
+    const value = getValue({
+      ...testProps,
+      formValue: undefined
+    })
+    expect(value).toEqual('')
+  })
+  it('should return false if !value and type checkbox', () => {
+    const value = getValue({
+      ...testProps,
+      type: 'checkbox',
+      formValue: undefined
+    })
+    expect(value).toEqual(false)
+  })
+  it('should return inputs value if radio', () => {
+    const radioValue = 'firstName'
+    const value = getValue({
+      ...testProps,
+      type: 'radio',
+      radioValue
+    })
+    expect(value).toEqual(radioValue)
+  })
+  it('should return empty string if !value and NOT type checkbox or text', () => {
+    const value = getValue({
+      ...testProps,
+      type: undefined,
+      onFormat: undefined,
+      formValue: undefined
+    })
+    expect(value).toEqual('')
+  })
+  it('should call onFormat if onFormat and value', () => {
+    const spy = jest.fn()
+    getValue({
+      ...testProps,
+      onFormat: spy,
+    })
+    expect(spy).toHaveBeenCalledWith({
+      errors: testProps.errors,
+      getIn,
+      touched: testProps.touched,
+      value: testProps.formValue,
+      values: testProps.values,
+    })
+  })
+  it('should return formValue', () => {
+    const value = getValue(testProps)
+    expect(value).toEqual(testProps.formValue)
+  })
+})
 
-  render() {
-    return this.props.children
-  }
-}
-
-const testProps = {
-  id: '123456',
-  name: 'email',
-  onBlur: undefined,
-  onChange: undefined,
-  onFormat: undefined,
-  onParse: undefined,
-  onValidate: undefined,
-  type: 'text',
-  value: undefined,
-}
-
-const testCtx = {
-  error: undefined,
-  isTouched: false,
-  onBlur: jest.fn(),
-  onChange: jest.fn(),
-  onRegisterField: jest.fn(),
-  onUnregisterField: jest.fn(),
-  values: { email: 'test1@testing.com' },
-}
 
 describe('useFormField', () => {
+  class ErrorBoundary extends React.Component {
+    componentDidCatch(error) {
+      this.props.spy(error)
+    }
+
+    render() {
+      return this.props.children
+    }
+  }
+
+  const testProps = {
+    id: '123456',
+    name: 'email',
+    onBlur: undefined,
+    onChange: undefined,
+    onFormat: undefined,
+    onParse: undefined,
+    onValidate: undefined,
+    type: 'text',
+    value: undefined,
+  }
+
+  const testCtx = {
+    error: undefined,
+    isTouched: false,
+    onBlur: jest.fn(),
+    onChange: jest.fn(),
+    onRegisterField: jest.fn(),
+    onUnregisterField: jest.fn(),
+    values: { email: 'test1@testing.com' },
+  }
 
   it('should return context', () => {
     const expected = {

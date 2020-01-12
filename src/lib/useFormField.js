@@ -1,9 +1,34 @@
-import { useEffect, useContext, useMemo } from 'react'
+import { useEffect, useContext, useMemo, useRef } from 'react'
 
 import FormContext from './FormContext'
-import getCheckedProps from './utils/getCheckedProps'
+import getCheckedProps from './utils/getCheckedProp'
 import getIn from './utils/getIn'
-import getValue from './utils/getValue'
+
+export function getValue({
+  errors,
+  formValue,
+  onFormat,
+  radioValue,
+  touched,
+  type,
+  values,
+}) {
+  if (!formValue) {
+    if (type === 'checkbox') return false
+    return ''
+  }
+  if (type === 'radio') return radioValue
+  if (onFormat) {
+    return onFormat({
+      errors,
+      getIn,
+      touched,
+      value: formValue,
+      values,
+    })
+  }
+  return formValue
+}
 
 function useFormField({
   id,
@@ -14,9 +39,9 @@ function useFormField({
   onChange: onChangeCallback,
   onFormat,
   onParse,
-  onValidate,
+  onValidate: onValidateProp,
   type = 'text',
-  value,
+  value: radioValue,
 }) {
   const {
     errors,
@@ -27,6 +52,7 @@ function useFormField({
     touched,
     values,
   } = useContext(FormContext)
+  const onValidate = useRef(onValidateProp)
   if (!name) throw Error('useFormField requires a name')
 
   useEffect(() => {
@@ -38,25 +64,32 @@ function useFormField({
       onChange: onChangeCallback,
       onFormat,
       onParse,
-      onValidate,
+      onValidate: onValidate.current,
       type,
-      value,
+      value: radioValue,
     })
     return () => {
       if (!isPersistOnUnmount) {
         onUnregisterField({ name })
       }
     }
-  }, [id, isPersistOnUnmount, label, name, onBlurCallback, onChangeCallback, onFormat, onParse, onRegisterField, onUnregisterField, onValidate, type, value])
+  }, [id, isPersistOnUnmount, label, name, onBlurCallback, onChangeCallback, onFormat, onParse, onRegisterField, onUnregisterField, radioValue, type])
 
-  const stateValue = getIn(values, name)
-  const valueToUse = getValue({ type, onFormat, value: value || stateValue })
-  const checkedProps = getCheckedProps({ stateValue, type, value }) || {}
+  const formValue = getIn(values, name)
   const error = getIn(errors, name)
   const isTouched = Boolean(getIn(touched, name))
+  const value = getValue({
+    errors,
+    formValue,
+    onFormat,
+    radioValue,
+    touched,
+    type,
+    values
+  })
 
   return useMemo(() => ({
-    ...checkedProps,
+    ...getCheckedProps({ type, formValue, radioValue }),
     error,
     label,
     isTouched,
@@ -64,8 +97,8 @@ function useFormField({
     onBlur,
     onChange,
     type,
-    value: valueToUse,
-  }), [checkedProps, error, isTouched, label, name, onBlur, onChange, type, valueToUse])
+    value,
+  }), [error, formValue, isTouched, label, name, onBlur, onChange, radioValue, type, value])
 }
 
 export default useFormField

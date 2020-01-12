@@ -1,89 +1,72 @@
 import React from 'react'
-import { mount } from 'enzyme'
+import {
+  fireEvent,
+  render,
+} from '@testing-library/react'
 
-import FormContext from './FormContext'
-import useFormSubmit, { isDisabled } from './useFormSubmit'
+import Form from './Form'
+import { TestField, TestSubmit } from './testData'
 
-const testCtx = {
-  errors: {},
-  isSubmitFailure: false,
-  isSubmitSuccess: false,
-  isSubmitting: false,
-  onSubmit: jest.fn(),
-  submitError: ''
-}
+import { isDisabled } from './useFormSubmit'
 
 describe('isDisabled', () => {
+  const testProps = {
+    isErrors: false,
+    isSubmitError: false,
+    isSubmitFailure: false,
+    isSubmitting: false,
+  }
   it('should return true if isSubmitting', () => {
     const props = {
-      isErrors: false,
-      isSubmitError: false,
-      isSubmitFailure: false,
+      ...testProps,
       isSubmitting: true,
     }
     expect(isDisabled(props)).toEqual(true)
   })
   it('should return true if isSubmitFailure and isErrors', () => {
     const props = {
+      ...testProps,
       isErrors: true,
-      isSubmitError: false,
       isSubmitFailure: true,
-      isSubmitting: false,
     }
     expect(isDisabled(props)).toEqual(true)
   })
   it('should return true if isSubmitFailure and isSubmitError', () => {
     const props = {
-      isErrors: false,
+      ...testProps,
       isSubmitError: true,
       isSubmitFailure: true,
-      isSubmitting: false,
+    }
+    expect(isDisabled(props)).toEqual(true)
+  })
+  it('should return true if isTouched and isErrors', () => {
+    const props = {
+      ...testProps,
+      isTouched: true,
+      isErrors: true,
     }
     expect(isDisabled(props)).toEqual(true)
   })
 })
 
 describe('useFormSubmit', () => {
-  it('should return context', () => {
-    const expected = {
-      isDisabled: false,
-      isErrors: false,
-      isSubmitError: false,
-      isSubmitSuccess: testCtx.isSubmitSuccess,
-      isSubmitting: testCtx.isSubmitting,
-      onSubmit: testCtx.onSubmit,
-      submitError: testCtx.submitError
-    }
-    const MyFormSubmit = () => {
-      const hook = useFormSubmit()
-      expect(hook).toEqual(expected)
-      return <div />
-    }
-    mount(
-      <FormContext.Provider value={testCtx}>
-        <MyFormSubmit />
-      </FormContext.Provider>
+  it('should submit form', () => {
+    const spy = jest.fn(() => Promise.resolve({}))
+    const {
+      getByLabelText,
+      getByText,
+    } = render(
+      <Form onSubmit={spy}>
+        <TestField name="email" label="Email" />
+        <TestSubmit>Submit</TestSubmit>
+      </Form>
     )
+    const field = getByLabelText('Email')
+    fireEvent.change(field, { target: { value: 'email@test.com' } })
+    fireEvent.blur(field, { target: { value: 'email@test.com' } })
+    const submit = getByText('Submit')
+    fireEvent.click(submit)
+    expect(spy).toHaveBeenCalledWith({ email: 'email@test.com' })
   })
-  it('should return isDisabled of true if isSubmitFailure and is', () => {
-    const expected = {
-      isDisabled: false,
-      isErrors: false,
-      isSubmitError: false,
-      isSubmitSuccess: testCtx.isSubmitSuccess,
-      isSubmitting: testCtx.isSubmitting,
-      onSubmit: testCtx.onSubmit,
-      submitError: testCtx.submitError
-    }
-    const MyFormSubmit = () => {
-      const hook = useFormSubmit()
-      expect(hook).toEqual(expected)
-      return <div />
-    }
-    mount(
-      <FormContext.Provider value={testCtx}>
-        <MyFormSubmit />
-      </FormContext.Provider>
-    )
-  })
+
 })

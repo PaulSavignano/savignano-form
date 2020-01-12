@@ -4,11 +4,12 @@ import PropTypes from 'prop-types'
 import useFormReset from './useFormReset'
 
 function FormReset({ component: Comp, names, ...rest }) {
-  const { onReset } = useFormReset()
+  const { onReset, isDisabled } = useFormReset(names)
   return (
     <Comp
       {...rest}
       onClick={() => onReset(names)}
+      disabled={isDisabled}
       type="button"
     />
   )

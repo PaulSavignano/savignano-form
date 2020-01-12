@@ -1,135 +1,167 @@
 import React from 'react'
 import {
-  cleanup,
   fireEvent,
   render,
 } from '@testing-library/react'
 
 import Form from './Form'
-import FormField from './FormField'
-import useFormFieldArray, { getInitialValueArray, getValueArray } from './useFormFieldArray'
-
-const initialValues = {
-  emails: [{ email: 'test1@test.com' }]
-}
-
-const TestComponent = ({
-  name,
-}) => {
-  const {
-    onAdd,
-    onChange,
-    onDelete,
-    value,
-  } = useFormFieldArray({ name })
-  return (
-    <div>
-      <button onClick={() => onAdd()} type="button">
-        Add
-      </button>
-      <button
-        onClick={() => onChange([{ email: 'test1@test.com' }, { email: 'test2@test.com' }])}
-        type="button"
-      >
-        Change
-      </button>
-      <ul>
-        {value.map((v, i) => (
-          <li key={i}>
-            <FormField
-              name={`${name}.${i}.email`}
-              component="input"
-              label={`${name} ${i}`}
-              id={`${name} ${i}`}
-              type="text"
-            />
-            <button data-testid={`delete-${i}`} onClick={() => onDelete(i)} type="button">
-              Delete
-            </button>
-          </li>
-        ))}
-      </ul>
-    </div>
-  )
-}
+import {
+  TestFieldArray
+} from './testData'
+import { handleDelete } from './useFormFieldArray'
 
 
-afterEach(cleanup)
+const emails = [{ email: 'one@test.com' }, { email: 'two@test.com' }]
+const initialValues = { emails }
+const onSubmit = jest.fn()
 
-describe('getValueArray', () => {
-  it('should return index array from object array', () => {
-    const valueArray = getValueArray([{ email: 'test1@test.com' }, { email: 'test2@test.com' }])
-    expect(valueArray).toEqual([0, 1])
+describe('handleDelete', () => {
+
+  it('should remove array index from state', () => {
+    const index = 0
+    const state = {
+      values: { emails: [...emails] },
+      errors: {},
+      touched: {},
+    }
+    const stateUpdate = handleDelete({
+      name: 'emails',
+      state,
+      method: a => a.splice(index, 1),
+      index
+    })
+    expect(stateUpdate).toEqual({
+      isTouched: true,
+      values: { emails: [emails[1]] }
+    })
   })
-  it('should return empty array if value is undefined', () => {
-    const valueArray = getValueArray(undefined)
-    expect(valueArray).toEqual([])
+
+
+  it('should delete error and touched if indexed', () => {
+    const index = 0
+    const state = {
+      values: { emails: [...emails] },
+      errors: { emails: emails.map(() => 'Required') },
+      touched: { emails: emails.map(() => true) },
+    }
+    const stateUpdate = handleDelete({
+      name: 'emails',
+      state,
+      method: a => a.splice(index, 1),
+      index
+    })
+    expect(stateUpdate).toEqual({
+      isTouched: true,
+      values: { emails: [emails[1]] },
+      errors: { emails: ['Required'] },
+      touched: { emails: [true] },
+    })
   })
 })
-
-describe('getInitialValueArray', () => {
-  it('should return array of indexes', () => {
-    const value = [{ email: 'test1@test.com' }, { email: 'test2@test.com' }]
-    const initialValueArray = getInitialValueArray({ name: 'emails', value })
-    expect(initialValueArray).toEqual([0, 1])
-  })
-  it('should return empty array if value is undefined', () => {
-    const value = undefined
-    const initialValueArray = getInitialValueArray({ name: 'emails', value })
-    expect(initialValueArray).toEqual([])
-  })
-  it('should return defaultValue indexes if no value or initialValue', () => {
-    const defaultValues = { emails: [{ email: 'test1@test.com' }, { email: 'test2@test.com' }] }
-    const initialValueArray = getInitialValueArray({ name: 'emails', defaultValues })
-    expect(initialValueArray).toEqual([0, 1])
-  })
-})
-
 
 describe('useFormFieldArray', () => {
 
-  it('should add to array when calling onAdd', () => {
-    const name = 'emails.1.email'
-    const label = 'emails 1'
-    const value = 'new@test.com'
-    const { getByText, queryAllByText, getByLabelText } = render(
-      <Form initialValues={initialValues}>
-        <TestComponent name="emails" />
+  it('should change array when calling onChange', () => {
+    const {
+      getByLabelText,
+      getByText,
+    } = render(
+      <Form initialValues={initialValues} onSubmit={onSubmit}>
+        <TestFieldArray name="emails" />
       </Form>
     )
-    const addButton = getByText("Add")
-    fireEvent.click(addButton)
-    const field = getByLabelText(label)
-    fireEvent.change(field, { target: { name, value } })
-    const deleteButtons = queryAllByText('Delete')
-    const changedField = getByLabelText(label)
-    expect(deleteButtons).toHaveLength(2)
-    expect(changedField.value).toEqual(value)
+    const onChangeBtn = getByText('Change')
+    fireEvent.click(onChangeBtn)
+    const firstField = getByLabelText('emails 1')
+    expect(firstField.value).toEqual(emails[0].email)
   })
 
-  it('should delete from array when calling onDelete', () => {
-    const { getByTestId, queryAllByText, getByText } = render(
-      <Form initialValues={initialValues}>
-        <TestComponent name="emails" />
+  it('should delete by index', () => {
+    const {
+      getByLabelText,
+      getByTestId,
+      queryAllByText,
+    } = render(
+      <Form initialValues={initialValues} onSubmit={onSubmit}>
+        <TestFieldArray name="emails" />
       </Form>
     )
-    const addButton = getByText('Add')
-    fireEvent.click(addButton)
-    fireEvent.click(getByTestId('delete-1'))
+    const deleteButton = getByTestId('delete-0')
+    fireEvent.click(deleteButton)
+    const deleteButtons = queryAllByText('Delete')
+    const field = getByLabelText('emails 0')
+    expect(deleteButtons).toHaveLength(1)
+    expect(field.value).toEqual(emails[1].email)
+  })
+
+  it('should delete from end when calling onPop', () => {
+    const {
+      getByLabelText,
+      getByText,
+      queryAllByText,
+    } = render(
+      <Form initialValues={initialValues} onSubmit={onSubmit}>
+        <TestFieldArray name="emails" />
+      </Form>
+    )
+    const onPopBtn = getByText('Pop')
+    fireEvent.click(onPopBtn)
+    const deleteButtons = queryAllByText('Delete')
+    const firstField = getByLabelText('emails 0')
+    expect(deleteButtons).toHaveLength(1)
+    expect(firstField.value).toEqual(emails[0].email)
+  })
+
+  it('should add to end when calling onPush', () => {
+    const {
+      getByText,
+      queryAllByText,
+    } = render(
+      <Form onSubmit={onSubmit}>
+        <TestFieldArray name="emails" />
+      </Form>
+    )
+    const onPushBtn = getByText('Push')
+    fireEvent.click(onPushBtn)
     const deleteButtons = queryAllByText('Delete')
     expect(deleteButtons).toHaveLength(1)
   })
 
-  it('should change root array to new objects', () => {
-    const { getByText, queryAllByText } = render(
-      <Form initialValues={initialValues}>
-        <TestComponent name="emails" />
+  it('should delete from front when calling onShift', () => {
+    const {
+      getByText,
+      queryAllByText,
+      getByLabelText,
+    } = render(
+      <Form initialValues={initialValues} onSubmit={onSubmit}>
+        <TestFieldArray name="emails" />
       </Form>
     )
-
-    fireEvent.click(getByText("Change"))
+    const onShiftBtn = getByText('Shift')
+    fireEvent.click(onShiftBtn)
     const deleteButtons = queryAllByText('Delete')
-    expect(deleteButtons).toHaveLength(2)
+    expect(deleteButtons).toHaveLength(1)
+    const field = getByLabelText('emails 0')
+    expect(field.value).toEqual(initialValues.emails[1].email)
   })
+
+  it('should add to front when calling onUnshift', () => {
+    const {
+      getByText,
+      queryAllByText,
+      getByLabelText,
+    } = render(
+      <Form initialValues={initialValues} onSubmit={onSubmit}>
+        <TestFieldArray name="emails" />
+      </Form>
+    )
+    const onUnshiftBtn = getByText('Unshift')
+    fireEvent.click(onUnshiftBtn)
+    const deleteButtons = queryAllByText('Delete')
+    expect(deleteButtons).toHaveLength(3)
+    const field = getByLabelText('emails 1')
+    expect(field.value).toEqual(initialValues.emails[0].email)
+  })
+
 
 })

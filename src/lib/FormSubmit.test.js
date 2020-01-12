@@ -9,10 +9,11 @@ const testCtx = {
   isSubmitSuccess: false,
   isSubmitting: false,
   onSubmit: jest.fn(),
+  touched: {},
   submitError: '',
 }
 
-const MyComponent = props => <button type="button" {...props} />
+const TestSubmit = props => <button type="button" {...props} />
 
 const testProps = {
   children: 'Save',
